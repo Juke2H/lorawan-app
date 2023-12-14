@@ -1,6 +1,7 @@
-import express from "express";
-import { Pool } from "pg";
-import mqtt from "mqtt";
+const express = require('express');
+const { Pool } = require('pg');
+const mqtt = require('mqtt');
+
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -8,10 +9,10 @@ const port = process.env.PORT || 3000;
 // PostgreSQL connection pool
 // Fill in
 const pool = new Pool({
-  user: "your_username",
+  user: "user",
   host: "localhost",
-  database: "your_database",
-  password: "your_password",
+  database: "measurements",
+  password: "password",
   port: 5432,
 });
 
