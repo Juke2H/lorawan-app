@@ -1,6 +1,7 @@
-import express from "express";
-import { Pool } from "pg";
-import mqtt from "mqtt";
+const express = require('express');
+const { Pool } = require('pg');
+const mqtt = require('mqtt');
+
 
 const app = express();
 const port = process.env.PORT || 3000;
