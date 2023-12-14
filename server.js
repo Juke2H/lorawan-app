@@ -4,17 +4,17 @@ const mqtt = require('mqtt');
 
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.port || 3000;
 
 // PostgreSQL connection pool
 // Fill in
 const pool = new Pool({
   user: "user",
-  host: "localhost",
+  host: "postgres_riveria",
   database: "measurements",
   password: "password",
   port: 5432,
-});
+})
 
 // MQTT connection
 // Fill in

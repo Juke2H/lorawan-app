@@ -4,17 +4,8 @@ volumes:
   dbvolume:
 
 services:
-  appservnodedocker:
-    image: appservnodedocker
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-    environment:
-      NODE_ENV: production
-    ports:
-      - 3000:3000
-
   db:
+    container_name: postgres_riveria
     image: postgres
     ports: 
       - 5435:5432
@@ -26,3 +17,16 @@ services:
     volumes:
         - ./db/init:/docker-entrypoint-initdb.d
         - dbvolume:/var/lib/postgresql/data
+  
+  appservnodedocker:
+    container_name: appserv_riveria
+    image: appservnodedocker
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    depends_on:
+      - db
+    environment:
+      NODE_ENV: production
+    ports:
+      - 3000:3000
