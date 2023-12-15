@@ -58,5 +58,5 @@ mqttClient.on("message", (topic, message) => {
 
 // Start the server
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`xServer is running on http://localhost:${port}`);
 });
