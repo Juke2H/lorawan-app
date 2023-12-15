@@ -28,6 +28,7 @@ services:
       - db
     environment:
       NODE_ENV: production
+      # DEBUG: mqttjs*
     ports:
       - 3000:3000
     volumes: 
