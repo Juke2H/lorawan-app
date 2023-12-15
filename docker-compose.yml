@@ -1,12 +1,45 @@
 version: '3.4'
 
+volumes: 
+  dbvolume:
+
 services:
+  db:
+    container_name: postgres_riveria
+    image: postgres:16.1
+    ports: 
+      - 5435:5432
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: user
+      POSTGRES_DB: measurements
+    volumes:
+        - ./db/init:/docker-entrypoint-initdb.d
+        - dbvolume:/var/lib/postgresql/data
+  
   appservnodedocker:
+    container_name: appserv_riveria
     image: appservnodedocker
     build:
       context: .
       dockerfile: ./Dockerfile
+    depends_on:
+      - db
     environment:
       NODE_ENV: production
     ports:
       - 3000:3000
+    volumes: 
+        - ./server.js:/usr/src/server/server.js
+        
+  mosquitto:
+    container_name: local_mosquitto
+    image: eclipse-mosquitto
+    depends_on:
+      - db
+    ports:
+      - 1883:1883
+    volumes:
+      - ./mqtt/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    

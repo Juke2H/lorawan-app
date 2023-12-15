@@ -4,21 +4,21 @@ const mqtt = require('mqtt');
 
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.port || 3000;
 
 // PostgreSQL connection pool
 // Fill in
 const pool = new Pool({
-  user: "your_username",
-  host: "localhost",
-  database: "your_database",
-  password: "your_password",
+  user: "user",
+  host: "postgres_riveria",
+  database: "measurements",
+  password: "password",
   port: 5432,
-});
+})
 
 // MQTT connection
 // Fill in
-const mqttClient = mqtt.connect("mqtt://mqtt.eclipse.org"); // Replace with your MQTT broker URL
+const mqttClient = mqtt.connect("mqtt://localhost:1883/"); // Replace with your MQTT broker URL
 
 // Test the database connection
 pool.query("SELECT NOW()", (err, res) => {
@@ -58,5 +58,5 @@ mqttClient.on("message", (topic, message) => {
 
 // Start the server
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`xServer is running on http://localhost:${port}`);
 });
