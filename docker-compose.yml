@@ -6,7 +6,7 @@ volumes:
 services:
   db:
     container_name: postgres_riveria
-    image: postgres
+    image: postgres:16.1
     ports: 
       - 5435:5432
     restart: always
@@ -30,3 +30,5 @@ services:
       NODE_ENV: production
     ports:
       - 3000:3000
+    volumes: 
+        - ./server.js:/usr/src/server/server.js
