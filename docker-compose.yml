@@ -32,3 +32,14 @@ services:
       - 3000:3000
     volumes: 
         - ./server.js:/usr/src/server/server.js
+        
+  mosquitto:
+    container_name: local_mosquitto
+    image: eclipse-mosquitto
+    depends_on:
+      - db
+    ports:
+      - 1883:1883
+    volumes:
+      - ./mqtt/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    

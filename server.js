@@ -18,7 +18,7 @@ const pool = new Pool({
 
 // MQTT connection
 // Fill in
-const mqttClient = mqtt.connect("mqtt://mqtt.eclipse.org"); // Replace with your MQTT broker URL
+const mqttClient = mqtt.connect("mqtt://localhost:1883/"); // Replace with your MQTT broker URL
 
 // Test the database connection
 pool.query("SELECT NOW()", (err, res) => {
