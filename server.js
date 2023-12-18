@@ -18,7 +18,7 @@ const pool = new Pool({
 
 // MQTT connection
 // Fill in
-const mqttClient = mqtt.connect("mqtt://mosquitto:1883/"); // Replace with your MQTT broker URL
+const mqttClient = mqtt.connect("mqtt://172.17.88.190:1883/"); // Replace with your MQTT broker URL
 
 // Test the database connection
 pool.query("SELECT NOW()", (err, res) => {
@@ -32,7 +32,7 @@ pool.query("SELECT NOW()", (err, res) => {
 // Handle MQTT messages
 // Fill in
 mqttClient.on("connect", () => {
-  mqttClient.subscribe("your_topic"); // Replace with your MQTT topic
+  mqttClient.subscribe("application/66293ac8-9d09-45be-be78-adbe84fbb267/device/a81758fffe0aa834/event/up"); // Replace with your MQTT topic
   console.log("Connected to MQTT broker");
 });
 
@@ -43,14 +43,22 @@ mqttClient.on("message", (topic, message) => {
 
   // Insert data into PostgreSQL database
   // Fill in
+  let importantData = { 
+    "devEui" : data.deviceInfo.devEui,
+    "time" : data.time, 
+    "temperature" : data.object.temperature,
+    "humidity" : data.object.humidity, 
+    "pressure" : data.object.pressure
+  }
+
   pool.query(
-    "INSERT INTO your_table (column1, column2) VALUES ($1, $2)",
-    [data.value1, data.value2],
+    "INSERT INTO measurements (device_id, timestamp, temperature, humidity, pressure) VALUES ($1, $2, $3, $4, $5)",
+    [data.deviceInfo.devEui, data.time, data.object.temperature, data.object.humidity, data.object.pressure],
     (err) => {
       if (err) {
         console.error("Error inserting data into the database", err);
       } else {
-        console.log("Data inserted into PostgreSQL database:", data);
+        console.log("Data inserted into PostgreSQL database:", importantData);
       }
     }
   );
