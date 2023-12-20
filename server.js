@@ -1,10 +1,6 @@
 const express = require('express');
-const { Pool } = require('pg');
 const mqtt = require('mqtt');
-
-
-const app = express();
-const port = process.env.port || 3000;
+const { Pool } = require('pg');
 
 // PostgreSQL connection pool
 // Fill in
@@ -16,6 +12,8 @@ const pool = new Pool({
   port: 5432,
 })
 
+const app = express();
+const port = process.env.port || 3000;
 // MQTT connection
 // Fill in
 const mqttClient = mqtt.connect("mqtt://mosquitto:1883/"); // Replace with your MQTT broker URL
@@ -92,3 +90,54 @@ mqttClient.on("message", (topic, message) => {
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
+
+
+// Get Queries
+
+const getOutsideMeasurementsByID = (request, response) => {
+  const getQuery = 'SELECT * FROM measurements ORDER BY device_id ASC LIMIT 15'
+  pool.query(getQuery, (error, results) => {
+    if (error) {
+      throw error
+    }
+    response.status(200).json(results.rows)
+  })
+}
+
+const getInsideMeasurementsByID = (request, response) => {
+  const getQuery = 'SELECT * FROM measurements2 ORDER BY device_id ASC LIMIT 15'
+  pool.query(getQuery, (error, results) => {
+    if (error) {
+      throw error
+    }
+    response.status(200).json(results.rows)
+  })
+}
+
+const getOutsideMeasurementsByTime = (request, response) => {
+  const getQuery = 'SELECT * FROM measurements ORDER BY timestamp ASC LIMIT 15'
+  pool.query(getQuery, (error, results) => {
+    if (error) {
+      throw error
+    }
+    response.status(200).json(results.rows)
+  })
+}
+
+const getInsideMeasurementsByTime = (request, response) => {
+  const getQuery = 'SELECT * FROM measurements2 ORDER BY timestamp ASC LIMIT 15'
+  pool.query(getQuery, (error, results) => {
+    if (error) {
+      throw error
+    }
+    response.status(200).json(results.rows)
+  })
+}
+
+app.get('/', (request, response) => {
+  response.json({ info: 'Hello' })
+})
+app.get('/getOutsideMeasurementsByID', getOutsideMeasurementsByID)
+app.get('/getInsideMeasurementsByID', getInsideMeasurementsByID)
+app.get('/getOutsideMeasurementsByTime', getOutsideMeasurementsByTime)
+app.get('/getInsideMeasurementsByTime', getInsideMeasurementsByTime)
