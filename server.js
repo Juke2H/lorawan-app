@@ -18,7 +18,7 @@ const pool = new Pool({
 
 // MQTT connection
 // Fill in
-const mqttClient = mqtt.connect("mqtt://172.17.88.190:1883/"); // Replace with your MQTT broker URL
+const mqttClient = mqtt.connect("mqtt://mosquitto:1883/"); // Replace with your MQTT broker URL
 
 // Test the database connection
 pool.query("SELECT NOW()", (err, res) => {
@@ -43,28 +43,52 @@ mqttClient.on("message", (topic, message) => {
 
   // Insert data into PostgreSQL database
   // Fill in
-  let importantData = { 
-    "devEui" : data.deviceInfo.devEui,
-    "time" : data.time, 
-    "temperature" : data.object.temperature,
-    "humidity" : data.object.humidity, 
-    "pressure" : data.object.pressure
-  }
+  let importantData;
+  
+  if (data.deviceInfo.deviceProfileName == "Ulkolämpömittari") {
+    importantData = { 
+      "devEui" : data.deviceInfo.devEui,
+      "time" : data.time, 
+      "temperature" : data.object.temperature,
+      "humidity" : data.object.humidity, 
+      "pressure" : data.object.pressure
+    };
 
-  pool.query(
-    "INSERT INTO measurements (device_id, timestamp, temperature, humidity, pressure) VALUES ($1, $2, $3, $4, $5)",
-    [data.deviceInfo.devEui, data.time, data.object.temperature, data.object.humidity, data.object.pressure],
-    (err) => {
-      if (err) {
-        console.error("Error inserting data into the database", err);
-      } else {
-        console.log("Data inserted into PostgreSQL database:", importantData);
+    pool.query(
+      "INSERT INTO measurements (device_id, timestamp, temperature, humidity, pressure) VALUES ($1, $2, $3, $4, $5)",
+      [data.deviceInfo.devEui, data.time, data.object.temperature, data.object.humidity, data.object.pressure],
+      (err) => {
+        if (err) {
+          console.error("Error inserting data into the database", err);
+        } else {
+          console.log("Data inserted into PostgreSQL database:", importantData);
+        }
       }
-    }
-  );
+    );
+  } else if (data.deviceInfo.deviceProfileName == "Sisälämpömittari") {
+    importantData = { 
+      "devEui" : data.deviceInfo.devEui,
+      "time" : data.time, 
+      "temperature" : data.object.temperature,
+      "humidity" : data.object.humidity, 
+      "waterleak" : data.object.waterleak
+    };
+
+    pool.query(
+      "INSERT INTO measurements2 (device_id, timestamp, temperature, humidity, waterleak) VALUES ($1, $2, $3, $4, $5)",
+      [data.deviceInfo.devEui, data.time, data.object.temperature, data.object.humidity, data.object.waterleak],
+      (err) => {
+        if (err) {
+          console.error("Error inserting data into the database", err);
+        } else {
+          console.log("Data inserted into PostgreSQL database:", importantData);
+        }
+      }
+    );
+  };
 });
 
 // Start the server
 app.listen(port, () => {
-  console.log(`xServer is running on http://localhost:${port}`);
+  console.log(`Server is running on http://localhost:${port}`);
 });
