@@ -1,0 +1,10 @@
+FROM node:lts-alpine
+ENV NODE_ENV=development
+WORKDIR /usr/src/server
+COPY ["backend/package.json", "backend/package-lock.json", "./"]
+RUN npm install && mv node_modules ../
+COPY ["backend/server.js", "./"]
+EXPOSE 3000
+RUN chown -R node /usr/src/server
+USER node
+CMD ["npm", "start"]
