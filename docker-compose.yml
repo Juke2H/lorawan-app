@@ -1,4 +1,4 @@
-version: '3.4'
+version: '3.8'
 
 volumes: 
   dbvolume:
@@ -15,15 +15,12 @@ services:
       POSTGRES_USER: user
       POSTGRES_DB: measurements
     volumes:
-        - ./backend/db/init:/docker-entrypoint-initdb.d
+        - ./db/init:/docker-entrypoint-initdb.d
         - dbvolume:/var/lib/postgresql/data
   
   appservnodedocker:
     container_name: appserv_riveria
-    image: appservnodedocker
-    build:
-      context: .
-      dockerfile: ./backend/Dockerfile
+    build: backend
     depends_on:
       - db
     environment:
@@ -42,4 +39,15 @@ services:
     ports:
       - 1883:1883
     volumes:
-      - ./backend/mqtt/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ./mqtt/mosquitto.conf:/mosquitto/config/mosquitto.conf
+
+  vite_docker:
+    container_name: vite_riveria
+    build: frontend
+    ports:
+      - 8000:8000
+    working_dir: /usr/src/server
+    volumes:
+      - type: bind
+        source: ./frontend/src
+        target: /usr/src/server/src
