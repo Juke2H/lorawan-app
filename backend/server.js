@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const mqtt = require('mqtt');
 const { Pool } = require('pg');
 
@@ -13,6 +14,10 @@ const pool = new Pool({
 })
 
 const app = express();
+
+app.use(cors());
+app.use(express.json());
+
 const port = process.env.port || 3000;
 // MQTT connection
 // Fill in
