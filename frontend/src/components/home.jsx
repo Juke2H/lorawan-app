@@ -7,14 +7,17 @@ export default function Home() {
   function handleClick() {
     navigate("/test");
   }
+  function handleNodeInfo() {
+    navigate("/NodeInfo");
+  }
 
   return (
     <div className="nodes">
       <h1>Lorawan Anturit</h1>
-        <button className='button' onClick={handleClick}>
+        <button className='button' onClick={handleNodeInfo}>
           Sisälämpöanturi
         </button>
-        <button className='button'>
+        <button className='button' onClick={handleClick}>
           Ulkolämpöanturi
         </button>
       </div>

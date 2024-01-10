@@ -4,12 +4,14 @@ import {createBrowserRouter, RouterProvider} from 'react-router-dom'
 import Root from './Root.jsx'
 import Home from "./components/home.jsx"
 import Test from "./components/test.jsx"
+import NodeInfo from "./components/nodeinfo/NodeInfo.jsx"
 import './index.css'
 
 const router = createBrowserRouter([
   { path: "/", Component: Home },
   { path: "*", Component: Root },
   { path: "/test", Component: Test },
+  { path: "/NodeInfo", Component: NodeInfo },
 ]);
 
 export default function App() {
