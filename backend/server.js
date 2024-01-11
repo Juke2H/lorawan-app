@@ -1,5 +1,6 @@
 const express = require('express');
 const mqtt = require('mqtt');
+const cors = require('cors');
 const { Pool } = require('pg');
 
 // PostgreSQL connection pool
@@ -13,6 +14,10 @@ const pool = new Pool({
 })
 
 const app = express();
+
+app.use(cors());
+app.use(express.json());
+
 const port = process.env.port || 3000;
 // MQTT connection
 // Fill in
