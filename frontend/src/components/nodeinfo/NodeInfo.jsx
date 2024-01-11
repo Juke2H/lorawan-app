@@ -4,50 +4,85 @@ import axios from "axios";
 
 const NodeInfo = () => {
   //functions
-  const [responseBody, setResponseBody] = useState("");
+  //Maybe write this to be generic at some point?
+  const [responseBody, setResponseBody] = useState([]);
 
-  const GetUser = () => {
-    const options = {
-      method: "GET",
-      url: "http://localhost:3000/getInsideMeasurementsByID",
-    };
-    try {
-      axios.request(options).then(function (response) {
-        console.log(response.data);
-        const responseJson = JSON.stringify(response.data);
-        setResponseBody(responseJson);
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const GetAnotherUser = () => {
-    try {
-      axios
-        .get("http://localhost:3000/getInsideMeasurementsByTime")
-        .then(function (response) {
-          console.log(response.data);
-          const responseJson = JSON.stringify(response.data);
-          setResponseBody(responseJson);
-        });
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    let ignore = false;
+
+    const GetUser = () => {
+      const options = {
+        method: "GET",
+        url: "http://localhost:3000/getInsideMeasurementsByID",
+      };
+      try {
+        axios.request(options).then(function (response) {
+          console.log(`Data: ${JSON.stringify(response.data)}`);
+
+          //Iterate over the response
+          for (let i of response.data) {
+            console.log(i);
+
+            //If the id isn't in state and if state isn't ignored, set state
+            if (responseBody.some((element) => element.id === i.id)) {
+              return;
+            } else {
+              if (!ignore) {
+                setResponseBody((prev) => [...prev, i]);
+              }
+            }
+          }
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    //Get request with loader state start and end
+    setIsLoading(true);
     GetUser();
-  }, []);
+    setIsLoading(false);
+
+    return () => {
+      ignore = true;
+    };
+  }, [responseBody]);
 
   //return
-  return (
-    <div>
-      <button onClick={() => GetUser()}>Click</button> <br />
-      <button onClick={() => GetAnotherUser()}>Clickety</button> <br />
-      <div>{responseBody}</div>
-    </div>
-  );
+  //if load complete, show table, else don't
+  if (!isLoading) {
+    return (
+      <div>
+        <table>
+          <thead>
+            <tr>
+              {
+              // responseBody[0] is null if array is empty, so there's an or operator
+              Object.keys(responseBody[0] || {}).map((heading) => {
+                return <th>{heading}</th>;
+              })
+              }
+            </tr>
+          </thead>
+          <tbody>
+            {responseBody.map((item) => {
+              return (
+                <tr>
+                  {Object.values(item).map((value) => {
+                    return <td>{value}</td>;
+                  })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    );
+  } else {
+    return <div>Loading...</div>;
+  }
 };
 
 export default NodeInfo;
