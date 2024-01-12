@@ -4,9 +4,8 @@ import axios from "axios";
 
 const NodeInfo = () => {
   //functions
-  //Maybe write this to be generic at some point?
   const [responseBody, setResponseBody] = useState([]);
-
+  const [node, setNode] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -45,6 +44,21 @@ const NodeInfo = () => {
     GetUser();
     setIsLoading(false);
 
+    const GetNode = (arr) => {
+      if (!ignore) {
+        for (let i of arr) {
+          //...newObj is a new object without id and device_id
+          //newObj can also be edited further after
+          const { id, device_id, ...newObj } = i;
+          console.log(i);
+          console.log(newObj);
+          setNode((prev) => [...prev, newObj]);
+        }
+      }
+    };
+
+    GetNode(responseBody);
+
     return () => {
       ignore = true;
     };
@@ -59,18 +73,18 @@ const NodeInfo = () => {
           <thead>
             <tr>
               {
-              // responseBody[0] is null if array is empty, so there's an or operator
-              Object.keys(responseBody[0] || {}).map((heading) => {
-                return <th>{heading}</th>;
-              })
+                // responseBody[0] is null if array is empty, so there's an or operator
+                Object.keys(node[0] || {}).map((heading) => {
+                  return <th>{heading}</th>;
+                })
               }
             </tr>
           </thead>
           <tbody>
-            {responseBody.map((item) => {
+            {node.map((item) => {
               return (
                 <tr>
-                  {Object.values(item).map((value) => {
+                  {Object.values(item || {}).map((value) => {
                     return <td>{value}</td>;
                   })}
                 </tr>
