@@ -99,7 +99,7 @@ app.listen(port, () => {
 // Get Queries
 
 const getOutsideMeasurementsByID = (request, response) => {
-  const getQuery = 'SELECT * FROM measurements ORDER BY device_id ASC LIMIT 15'
+  const getQuery = 'SELECT * FROM measurements ORDER BY device_id ASC LIMIT 1'
   pool.query(getQuery, (error, results) => {
     if (error) {
       throw error
@@ -109,7 +109,7 @@ const getOutsideMeasurementsByID = (request, response) => {
 }
 
 const getInsideMeasurementsByID = (request, response) => {
-  const getQuery = 'SELECT * FROM measurements2 ORDER BY device_id ASC LIMIT 15'
+  const getQuery = 'SELECT * FROM measurements2 ORDER BY device_id ASC LIMIT 1'
   pool.query(getQuery, (error, results) => {
     if (error) {
       throw error
@@ -119,7 +119,7 @@ const getInsideMeasurementsByID = (request, response) => {
 }
 
 const getOutsideMeasurementsByTime = (request, response) => {
-  const getQuery = 'SELECT * FROM measurements ORDER BY timestamp ASC LIMIT 15'
+  const getQuery = 'SELECT * FROM measurements ORDER BY timestamp DESC LIMIT 5'
   pool.query(getQuery, (error, results) => {
     if (error) {
       throw error
@@ -129,7 +129,7 @@ const getOutsideMeasurementsByTime = (request, response) => {
 }
 
 const getInsideMeasurementsByTime = (request, response) => {
-  const getQuery = 'SELECT * FROM measurements2 ORDER BY timestamp ASC LIMIT 15'
+  const getQuery = 'SELECT * FROM measurements2 ORDER BY timestamp DESC LIMIT 5'
   pool.query(getQuery, (error, results) => {
     if (error) {
       throw error
