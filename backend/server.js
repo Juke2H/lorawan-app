@@ -138,6 +138,50 @@ const getInsideMeasurementsByTime = (request, response) => {
   })
 }
 
+app.get('/byDateInside', async (req, res) => {
+  const requestedDate = req.query.date;
+  console.log('requestedDate:', requestedDate);
+  console.log(req.query.date)
+
+  if (!requestedDate) {
+    return res.status(400).json({ error: 'Date parameter is missing' });
+  }
+
+  try {
+    console.log('Executing query for date:', requestedDate);
+    const result = await pool.query(
+      'SELECT * FROM measurements2 WHERE CAST(timestamp AS DATE) = $1',
+      [requestedDate]
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error executing database query:', error);
+    res.status(500).json({ error: 'Internal server error', details: error.message });
+  }
+});
+
+app.get('/byDateOutside', async (req, res) => {
+  const requestedDate = req.query.date;
+  console.log('requestedDate:', requestedDate);
+  console.log(req.query.date)
+
+  if (!requestedDate) {
+    return res.status(400).json({ error: 'Date parameter is missing' });
+  }
+
+  try {
+    console.log('Executing query for date:', requestedDate);
+    const result = await pool.query(
+      'SELECT * FROM measurements WHERE CAST(timestamp AS DATE) = $1',
+      [requestedDate]
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error executing database query:', error);
+    res.status(500).json({ error: 'Internal server error', details: error.message });
+  }
+});
+
 app.get('/', (request, response) => {
   response.json({ info: 'Hello' })
 })
