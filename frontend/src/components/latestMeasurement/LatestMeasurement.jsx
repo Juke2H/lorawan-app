@@ -4,13 +4,14 @@ import axios from "axios";
 const LatestMeasurement = () => {
   const [responseBody, setResponseBody] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [node, setNode] = useState({});
 
   const MINUTE_MS = 60000;
 
   useEffect(() => {
     let ignore = false;
 
-    const fetchData = async () => {
+    const FetchData = async () => {
       setIsLoading(true);
 
       try {
@@ -20,6 +21,9 @@ const LatestMeasurement = () => {
 
         if (!ignore) {
           setResponseBody(response.data);
+          const { id, device_id, timestamp, ...newObj} = response.data[0]
+          console.log(newObj);
+          setNode(newObj);
           console.log("Response Data:", JSON.stringify(response.data));
         }
       } catch (error) {
@@ -31,7 +35,9 @@ const LatestMeasurement = () => {
 
     const interval = setInterval(() => {
       console.log("Logs every minute");
-      fetchData();
+      FetchData();
+      console.log(responseBody);
+      console.log(node);
     }, MINUTE_MS);
 
     return () => {
@@ -40,7 +46,6 @@ const LatestMeasurement = () => {
     };
   }, []);
 
-  // Render
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -50,7 +55,7 @@ const LatestMeasurement = () => {
       <table>
         <thead>
           <tr>
-            {Object.keys(responseBody[0] || {}).map((heading) => (
+            {Object.keys(node || {}).map((heading) => (
               <th key={heading}>{heading}</th>
             ))}
           </tr>
@@ -58,7 +63,7 @@ const LatestMeasurement = () => {
         <tbody>
           {responseBody.length > 0 ? (
             <tr>
-              {Object.values(responseBody[0] || {}).map((value, index) => (
+              {Object.values(node || {}).map((value, index) => (
                 <td key={index}>{value}</td>
               ))}
             </tr>
