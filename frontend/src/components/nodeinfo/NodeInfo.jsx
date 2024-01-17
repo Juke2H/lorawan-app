@@ -4,6 +4,7 @@ import axios from "axios";
 
 const NodeInfo = () => {
   //functions
+  //Needs better render code
   const [responseBody, setResponseBody] = useState([]);
   const [node, setNode] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -73,9 +74,9 @@ const NodeInfo = () => {
           <thead>
             <tr>
               {
-                // responseBody[0] is null if array is empty, so there's an or operator
+                // node[0] is null if array is empty, so there's an or operator
                 Object.keys(node[0] || {}).map((heading) => {
-                  return <th>{heading}</th>;
+                  return <th key={heading}>{heading}</th>;
                 })
               }
             </tr>
@@ -84,8 +85,8 @@ const NodeInfo = () => {
             {node.map((item) => {
               return (
                 <tr>
-                  {Object.values(item || {}).map((value) => {
-                    return <td>{value}</td>;
+                  {Object.values(item || {}).map((value, index) => {
+                    return <td key={index}>{value}</td>;
                   })}
                 </tr>
               );
