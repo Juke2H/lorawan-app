@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const mqtt = require('mqtt');
+const cors = require('cors');
 const { Pool } = require('pg');
 
 // PostgreSQL connection pool
@@ -138,6 +139,16 @@ const getInsideMeasurementsByTime = (request, response) => {
   })
 }
 
+const getLatestInsideMeasurement = (request, response) => {
+  const getQuery = 'SELECT * FROM measurements2 ORDER BY id DESC LIMIT 1'
+  pool.query(getQuery, (error, results) => {
+    if (error) {
+      throw error
+    }
+    response.status(200).json(results.rows)
+  })
+}
+
 app.get('/', (request, response) => {
   response.json({ info: 'Hello' })
 })
@@ -145,3 +156,4 @@ app.get('/getOutsideMeasurementsByID', getOutsideMeasurementsByID)
 app.get('/getInsideMeasurementsByID', getInsideMeasurementsByID)
 app.get('/getOutsideMeasurementsByTime', getOutsideMeasurementsByTime)
 app.get('/getInsideMeasurementsByTime', getInsideMeasurementsByTime)
+app.get('/getLatestInsideMeasurement', getLatestInsideMeasurement)
