@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import "./LatestMeasurement.css";
 
 const LatestMeasurement = () => {
   const [responseBody, setResponseBody] = useState({});
@@ -21,7 +22,7 @@ const LatestMeasurement = () => {
 
         if (!ignore) {
           setResponseBody(response.data);
-          const { id, device_id, timestamp, ...newObj} = response.data[0]
+          const { id, device_id, timestamp, ...newObj } = response.data[0];
           console.log(newObj);
           setNode(newObj);
           console.log("Response Data:", JSON.stringify(response.data));
@@ -36,8 +37,6 @@ const LatestMeasurement = () => {
     const interval = setInterval(() => {
       console.log("Logs every minute");
       FetchData();
-      console.log(responseBody);
-      console.log(node);
     }, MINUTE_MS);
 
     return () => {
@@ -48,11 +47,23 @@ const LatestMeasurement = () => {
 
   if (isLoading) {
     return <div>Loading...</div>;
+  } else if (Object.values(node).length === 3) {
+    return (
+      <div>
+        <div className="nodes">
+          <div className="nodeZero">{Object.values(node)[0]}</div>
+          <div className="nodeOne">{Object.values(node)[1]}</div>
+          <div className="nodeTwo">{Object.values(node)[2]}</div>
+        </div>
+      </div>
+    );
+  } else {
+    return <div>{Object.values(node).length}</div>
   }
 
-  return (
+  /* return (
     <div>
-      <table>
+      {<table>
         <thead>
           <tr>
             {Object.keys(node || {}).map((heading) => (
@@ -73,9 +84,9 @@ const LatestMeasurement = () => {
             </tr>
           )}
         </tbody>
-      </table>
-    </div>
-  );
+          </table> }
+    </div> 
+  ); */
 };
 
 export default LatestMeasurement;
