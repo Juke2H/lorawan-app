@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
 const mqtt = require('mqtt');
-const cors = require('cors');
 const { Pool } = require('pg');
 
 // PostgreSQL connection pool
@@ -100,7 +99,7 @@ app.listen(port, () => {
 // Get Queries
 
 const getOutsideMeasurementsByID = (request, response) => {
-  const getQuery = 'SELECT * FROM measurements ORDER BY device_id ASC LIMIT 15'
+  const getQuery = 'SELECT * FROM measurements ORDER BY device_id ASC LIMIT 1'
   pool.query(getQuery, (error, results) => {
     if (error) {
       throw error
@@ -110,7 +109,7 @@ const getOutsideMeasurementsByID = (request, response) => {
 }
 
 const getInsideMeasurementsByID = (request, response) => {
-  const getQuery = 'SELECT * FROM measurements2 ORDER BY device_id ASC LIMIT 15'
+  const getQuery = 'SELECT * FROM measurements2 ORDER BY device_id ASC LIMIT 1'
   pool.query(getQuery, (error, results) => {
     if (error) {
       throw error
@@ -120,7 +119,7 @@ const getInsideMeasurementsByID = (request, response) => {
 }
 
 const getOutsideMeasurementsByTime = (request, response) => {
-  const getQuery = 'SELECT * FROM measurements ORDER BY timestamp ASC LIMIT 15'
+  const getQuery = 'SELECT * FROM measurements ORDER BY timestamp DESC LIMIT 5'
   pool.query(getQuery, (error, results) => {
     if (error) {
       throw error
@@ -130,7 +129,7 @@ const getOutsideMeasurementsByTime = (request, response) => {
 }
 
 const getInsideMeasurementsByTime = (request, response) => {
-  const getQuery = 'SELECT * FROM measurements2 ORDER BY timestamp ASC LIMIT 15'
+  const getQuery = 'SELECT * FROM measurements2 ORDER BY timestamp DESC LIMIT 5'
   pool.query(getQuery, (error, results) => {
     if (error) {
       throw error
@@ -148,6 +147,44 @@ const getLatestInsideMeasurement = (request, response) => {
     response.status(200).json(results.rows)
   })
 }
+
+app.get('/byDateInside', async (req, res) => {
+  const requestedDate = req.query.date;
+
+  if (!requestedDate) {
+    return res.status(400).json({ error: 'Date parameter is missing' });
+  }
+
+  try {
+    const result = await pool.query(
+      'SELECT * FROM measurements2 WHERE CAST(timestamp AT TIME ZONE \'UTC\' AT TIME ZONE \'Europe/Helsinki\' AS DATE) = $1',
+      [requestedDate]
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error executing database query:', error);
+    res.status(500).json({ error: 'Internal server error', details: error.message });
+  }
+});
+
+app.get('/byDateOutside', async (req, res) => {
+  const requestedDate = req.query.date;
+
+  if (!requestedDate) {
+    return res.status(400).json({ error: 'Date parameter is missing' });
+  }
+
+  try {
+    const result = await pool.query(
+      'SELECT * FROM measurements WHERE CAST(timestamp AT TIME ZONE \'UTC\' AT TIME ZONE \'Europe/Helsinki\' AS DATE) = $1',
+      [requestedDate]
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error executing database query:', error);
+    res.status(500).json({ error: 'Internal server error', details: error.message });
+  }
+});
 
 app.get('/', (request, response) => {
   response.json({ info: 'Hello' })
