@@ -1,7 +1,7 @@
 FROM node:lts-alpine
 ENV NODE_ENV=development
 WORKDIR /usr/src/server
-COPY ["package.json", "package-lock.json", "./"]
+COPY ["package*.json", "./"]
 RUN npm install && mv node_modules ../
 COPY ["server.js", "./"]
 EXPOSE 3000

@@ -1,4 +1,4 @@
-version: '3.4'
+version: '3.8'
 
 volumes: 
   dbvolume:
@@ -20,10 +20,7 @@ services:
   
   appservnodedocker:
     container_name: appserv_riveria
-    image: appservnodedocker
-    build:
-      context: .
-      dockerfile: ./Dockerfile
+    build: backend
     depends_on:
       - db
     environment:
@@ -32,7 +29,7 @@ services:
     ports:
       - 3000:3000
     volumes: 
-        - ./server.js:/usr/src/server/server.js
+        - ./backend/server.js:/usr/src/server/server.js
         
   mosquitto:
     container_name: local_mosquitto
@@ -43,4 +40,14 @@ services:
       - 1883:1883
     volumes:
       - ./mqtt/mosquitto.conf:/mosquitto/config/mosquitto.conf
-    
+
+  vite_docker:
+    container_name: vite_riveria
+    build: frontend
+    ports:
+      - 8000:8000
+    working_dir: /usr/src/server
+    volumes:
+      - type: bind
+        source: ./frontend/src
+        target: /usr/src/server/src
