@@ -140,17 +140,14 @@ const getInsideMeasurementsByTime = (request, response) => {
 
 app.get('/byDateInside', async (req, res) => {
   const requestedDate = req.query.date;
-  console.log('requestedDate:', requestedDate);
-  console.log(req.query.date)
 
   if (!requestedDate) {
     return res.status(400).json({ error: 'Date parameter is missing' });
   }
 
   try {
-    console.log('Executing query for date:', requestedDate);
     const result = await pool.query(
-      'SELECT * FROM measurements2 WHERE CAST(timestamp AS DATE) = $1',
+      'SELECT * FROM measurements2 WHERE CAST(timestamp AT TIME ZONE \'UTC\' AT TIME ZONE \'Europe/Helsinki\' AS DATE) = $1',
       [requestedDate]
     );
     res.json(result.rows);
@@ -162,17 +159,14 @@ app.get('/byDateInside', async (req, res) => {
 
 app.get('/byDateOutside', async (req, res) => {
   const requestedDate = req.query.date;
-  console.log('requestedDate:', requestedDate);
-  console.log(req.query.date)
 
   if (!requestedDate) {
     return res.status(400).json({ error: 'Date parameter is missing' });
   }
 
   try {
-    console.log('Executing query for date:', requestedDate);
     const result = await pool.query(
-      'SELECT * FROM measurements WHERE CAST(timestamp AS DATE) = $1',
+      'SELECT * FROM measurements WHERE CAST(timestamp AT TIME ZONE \'UTC\' AT TIME ZONE \'Europe/Helsinki\' AS DATE) = $1',
       [requestedDate]
     );
     res.json(result.rows);
