@@ -1,15 +1,9 @@
-import '/src/App.css'
+import './home.css'
 import { useNavigate } from "react-router-dom";
 
 export default function Home() {
   const navigate = useNavigate();
 
-  // function goToTest() {
-  //   navigate("/test");
-  // }
-  // function goToTest2() {
-  //   navigate("/test2");
-  // }
   function goDayPickerInside() {
     navigate("/dayPickerInside");
   }
@@ -21,15 +15,15 @@ export default function Home() {
   }
 
   return (
-    <div className="nodes">
+    <div>
       <h1>Lorawan Anturit</h1>
-        <button className='button' onClick={goDayPickerInside}>
+        <button className='homeButtons' onClick={goDayPickerInside}>
           Sisälämpökalenteri
         </button>
-        <button className='button' onClick={goDayPickerOutside}>
+        <button className='homeButtons' onClick={goDayPickerOutside}>
           Ulkolämpökalenteri
         </button>
-        <button className='button' onClick={goLatestMeasurement}>
+        <button className='homeButtons' onClick={goLatestMeasurement}>
           Sisälämpöviimeisin
         </button>
       </div>

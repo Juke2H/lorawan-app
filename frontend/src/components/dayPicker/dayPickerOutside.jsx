@@ -1,4 +1,4 @@
-import '/src/App.css'
+import './dayPicker.css'
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { fi } from "date-fns/locale"
@@ -76,7 +76,7 @@ export default function DayPickerInside() {
   if (selected && data && data.length === 0)
     return (
       <div>
-        <button className='button' onClick={() => goToHome()}>Takaisin</button>
+        <button className='dayPickerButtons' onClick={() => goToHome()}>Takaisin</button>
         <h3>Valitse päivä</h3> <br></br>
       <DayPicker locale={fi} ISOWeek showOutsideDays fixedWeeks
         mode="single"
@@ -91,7 +91,7 @@ export default function DayPickerInside() {
 
     return (
       <div>
-        <button className='button' onClick={() => goToHome()}>Takaisin</button>
+        <button className='dayPickerButtons' onClick={() => goToHome()}>Takaisin</button>
         <h3>Valitse päivä</h3> <br></br>
         <DayPicker locale={fi} ISOWeek showOutsideDays fixedWeeks
           mode="single"
@@ -99,7 +99,7 @@ export default function DayPickerInside() {
           onSelect={setSelected}
         />
         <div>
-        <button className='button' onClick={() => toggleLineVisibility()}>
+        <button className='dayPickerButtons' onClick={() => toggleLineVisibility()}>
           {isLineVisible ? 'Sulje käyrä' : 'Avaa käyrä'}
         </button>
           <div>
