@@ -54,6 +54,7 @@ const LatestMeasurement = () => {
           <div className="nodeZero">{Object.values(node)[0]}</div>
           <div className="nodeOne">{Object.values(node)[1]}</div>
           <div className="nodeTwo">{Object.values(node)[2]}</div>
+          <div className="nodeThree"></div>
         </div>
       </div>
     );

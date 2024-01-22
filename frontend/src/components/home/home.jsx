@@ -16,15 +16,21 @@ export default function Home() {
   function goDayPickerOutside() {
     navigate("/dayPickerOutside");
   }
+  function goLatestMeasurement() {
+    navigate("/LatestMeasurement");
+  }
 
   return (
     <div className="nodes">
       <h1>Lorawan Anturit</h1>
         <button className='button' onClick={goDayPickerInside}>
-          Sisälämpöanturi
+          Sisälämpökalenteri
         </button>
         <button className='button' onClick={goDayPickerOutside}>
-          Ulkolämpöanturi
+          Ulkolämpökalenteri
+        </button>
+        <button className='button' onClick={goLatestMeasurement}>
+          Sisälämpöviimeisin
         </button>
       </div>
   )
