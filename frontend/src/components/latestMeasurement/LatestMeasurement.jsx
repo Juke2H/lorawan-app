@@ -82,7 +82,7 @@ const LatestMeasurement = () => {
   } else if (Object.values(node).length === 3) {
     return (
       <div>
-        <div className="nodes">
+        <div className="nodesLatestMeasurement">
           <div className="nodeZero">{Object.values(node)[0]}</div>
           <div className="nodeOne">{Object.values(node)[1]}</div>
           <div className="nodeTwo">{Object.values(node)[2]}</div>
