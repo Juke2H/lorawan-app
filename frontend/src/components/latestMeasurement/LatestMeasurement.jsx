@@ -45,6 +45,38 @@ const LatestMeasurement = () => {
     };
   }, []);
 
+  useEffect(() => {
+    let ignore = false;
+
+    const FetchData = async () => {
+      setIsLoading(true);
+
+      try {
+        const response = await axios.get(
+          "http://localhost:3000/getLatestInsideMeasurement"
+        );
+
+        if (!ignore) {
+          setResponseBody(response.data);
+          const { id, device_id, timestamp, ...newObj } = response.data[0];
+          console.log(newObj);
+          setNode(newObj);
+          console.log("Response Data:", JSON.stringify(response.data));
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    FetchData();
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
   if (isLoading) {
     return <div>Loading...</div>;
   } else if (Object.values(node).length === 3) {
@@ -59,7 +91,7 @@ const LatestMeasurement = () => {
       </div>
     );
   } else {
-    return <div>{Object.values(node).length}</div>
+    return <div>{Object.values(node).length}</div>;
   }
 
   /* return (
