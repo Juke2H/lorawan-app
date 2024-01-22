@@ -1,23 +1,20 @@
-.nodes {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-    gap: 8px;
-    width: 200px; /* Set your desired width */
-    height: 200px; /* Set your desired height */
-  }
-  
-  .nodeZero,
-  .nodeOne,
-  .nodeTwo,
-  .nodeThree {
-    border: 1px solid #000; /* Add border for better visualization */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-  }
-  
-  .nodeThree {
-    background-color: #ccc; /* Set a background color for nodeThree */
-  }
+.nodeInfo {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 2px;
+  width: 200px;
+  height: 200px;
+}
+
+.nodeZero,
+.nodeOne,
+.nodeTwo,
+.nodeThree {
+  border: 2px solid #3498db;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  background-color: #ecf0f1;
+}
