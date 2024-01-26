@@ -1,19 +1,42 @@
-#root {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 2rem;
-    text-align: center;
-  }
-  
 .dayPickerButtons {
   background-color: rgb(150, 147, 147);
 }
 
 .dayPicker {
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+  display: flexbox;
+  max-width: 1280px;
+}
+
+.asd {
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+  display: flex;
+  justify-content: center;
   align-items: center;
+  max-width: 1280px;
+}
+
+.chart {
+  width: 100%;
+  margin: auto;
+  text-align: center;
+  display: flex;
+  max-width: 1200px;
+  max-height: 300px;
   justify-content: center;
 }
 
-  
-  
-  
+.dataPointsContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.dataPoint {
+  border: 1px solid #ddd;
+  padding: 16px;
+}

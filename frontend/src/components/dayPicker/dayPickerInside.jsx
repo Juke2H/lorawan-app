@@ -5,8 +5,8 @@ import { fi } from "date-fns/locale"
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 import { useNavigate } from "react-router-dom";
-import { Chart as ChartJS } from "chart.js/auto";
 import { Line } from "react-chartjs-2";
+import { Chart as ChartJS } from "chart.js/auto";
 
 export default function DayPickerInside() {
   const [selected, setSelected] = useState(new Date());
@@ -42,14 +42,6 @@ export default function DayPickerInside() {
     setDataVisibility(!isDataVisible);
   }
 
-  function clockTime(timestamp) {
-    const dateObj = new Date(timestamp);
-    const hours = dateObj.getHours();
-    const minutes = dateObj.getMinutes().toString().padStart(2, '0');
-
-    return `${hours}:${minutes}`;
-  }
-
   function formatTimestamp(timestamp) {
     const dateObj = new Date(timestamp);
     const day = dateObj.getDate();
@@ -63,7 +55,6 @@ export default function DayPickerInside() {
   }
 
   function waterLeak(isWaterLeaking) {
-
     if (isWaterLeaking == 0) {
       isWaterLeaking = "Ei"
     } else {
@@ -73,78 +64,124 @@ export default function DayPickerInside() {
   }
 
   function calculateAverageTemperature() {
-
+    if (!data || data.length === 0) {
+      return 0;
+    }
     const totalTemperature = data.reduce((sum, item) => {
       const temperature = parseFloat(item.temperature);
       return sum + (!isNaN(temperature) ? temperature : 0);
     }, 0);
-  
     const averageTemperature = totalTemperature / data.length;
-  
     if (isNaN(averageTemperature)) {
       return 0;
     }
-  
     return averageTemperature.toFixed(1);
   }
 
+  function roundTemperature(temperature) {
+    if (!temperature && temperature !== 0) {
+    return 0;
+  }
+    const roundedTemperature = (Math.round(parseFloat(temperature) * 2) / 2).toFixed(1);
+    const strippedTemperature = parseFloat(roundedTemperature); // Poista ylimääräiset desimaalit
+  
+    if (isNaN(strippedTemperature)) {
+      return 0;
+    }
+    return strippedTemperature % 1 === 0 ? strippedTemperature.toFixed(0) : strippedTemperature.toFixed(1);
+  }
 
-  if (selected && data && data.length === 0)
+  function formatTimestampForChart(timestamp) {
+    const dateObj = new Date(timestamp);
+    const hours = dateObj.getHours().toString().padStart(2, '0');
+    const minutes = dateObj.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
+  }
+
+  if (!selected || (data && data.length === 0))
     return (
       <div>
+      <div className='dayPicker'>
         <button className='dayPickerButtons' onClick={() => goToHome()}>Takaisin</button>
         <h3>Valitse päivä</h3> <br></br>
+        </div>
+        <div className='asd'>
         <DayPicker locale={fi} ISOWeek showOutsideDays fixedWeeks
           mode="single"
           selected={selected}
           onSelect={setSelected}
+          
         />
-        <div>
-          <h4>Ei tietoja</h4>
         </div>
+        <div className='dayPicker'>
+          <h4>Ei tietoja</h4>
+          </div>
       </div>
     )
 
   return (
+    <div>
     <div className='dayPicker'>
       <button className='dayPickerButtons' onClick={() => goToHome()}>Takaisin</button>
       <h3>Valitse päivä</h3> <br></br>
+      </div>
+      <div className='asd'>
       <DayPicker locale={fi} ISOWeek showOutsideDays fixedWeeks
         mode="single"
         selected={selected}
         onSelect={setSelected}
       />
-      <div>
-        <h4>Lämpötilan keskiarvo: {calculateAverageTemperature()}°C</h4>
       </div>
-      <div>
-        <div>
+      <div className='dayPicker'>
+        <h4>Lämpötilan keskiarvo: {calculateAverageTemperature()}°C</h4>
+      
+      </div>
+        <div className='chart'>
           <Line
             data={{
-              labels: data && data.map((data) => clockTime(data.timestamp)),
+              labels: data && data.map((data) => formatTimestampForChart(data.timestamp)),
               datasets: [
                 {
                   label: "Lämpötila",
-                  data: data && data.map((data) => data.temperature),
+                  data: data && data.map((data) => ({
+                    x: formatTimestampForChart(data.timestamp),
+                    y: roundTemperature(data.temperature)
+                  })),
                   backgroundColor: "#064FF0",
                   borderColor: "#064FF0",
                 }
               ],
             }}
+            options={{
+              scales: {
+                y: {
+                  ticks: {
+                    stepSize: 0.5,
+                    callback: function (value, index, values) { // Poista desimaalit, jos ne ovat nolla
+                      return value % 1 === 0 ? value.toFixed(0) : value.toFixed(1);
+                    },
+                  },
+                },
+              },
+            }}
+            style={{ width: '100%', maxWidth: '700px', maxHeight: '200px', margin: 'auto' }}
           />
+          </div>
+          <div className='dayPicker'>
           <button className='dayPickerButtons' onClick={() => toggleDataVisibility()}>
             {isDataVisible ? 'Piilota datapisteet' : 'Näytä datapisteet'}
           </button>
-        </div>
+          </div>
+          <div className='dataPointsContainer'>
         {isDataVisible && data && data.map(item => (
-          <div key={item.id}>
+          <div key={item.id} className='dataPoint'>
             <h4>{formatTimestamp(item.timestamp)}</h4>
-            <p>Lämpötila: {item.temperature}°C</p>
+            <p>Lämpötila: {roundTemperature(item.temperature)}°C</p>
             <p>Kosteus: {item.humidity}%</p>
             <p>Vesivahinko: {waterLeak(item.waterleak)}</p>
           </div>
         ))}
       </div>
-    </div>
+      </div>
   );
 }

@@ -15,7 +15,7 @@ export default function Home() {
   }
 
   return (
-    <div>
+    <div className='homePage'>
       <h1>Lorawan Anturit</h1>
         <button className='homeButtons' onClick={goDayPickerInside}>
           Sisälämpökalenteri

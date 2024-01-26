@@ -51,7 +51,7 @@ mqttClient.on("message", (topic, message) => {
   if (data.deviceInfo.deviceProfileName == "Ulkolämpömittari") {
     importantData = { 
       "devEui" : data.deviceInfo.devEui,
-      "time" : data.time, 
+      "time" : data.rxInfo[0].nsTime, 
       "temperature" : data.object.temperature,
       "humidity" : data.object.humidity, 
       "pressure" : data.object.pressure
@@ -59,7 +59,7 @@ mqttClient.on("message", (topic, message) => {
 
     pool.query(
       "INSERT INTO measurements (device_id, timestamp, temperature, humidity, pressure) VALUES ($1, $2, $3, $4, $5)",
-      [data.deviceInfo.devEui, data.time, data.object.temperature, data.object.humidity, data.object.pressure],
+      [data.deviceInfo.devEui, data.rxInfo[0].nsTime, data.object.temperature, data.object.humidity, data.object.pressure],
       (err) => {
         if (err) {
           console.error("Error inserting data into the database", err);
@@ -71,7 +71,7 @@ mqttClient.on("message", (topic, message) => {
   } else if (data.deviceInfo.deviceProfileName == "Sisälämpömittari") {
     importantData = { 
       "devEui" : data.deviceInfo.devEui,
-      "time" : data.time, 
+      "time" : data.rxInfo[0].nsTime,
       "temperature" : data.object.temperature,
       "humidity" : data.object.humidity, 
       "waterleak" : data.object.waterleak
@@ -79,7 +79,7 @@ mqttClient.on("message", (topic, message) => {
 
     pool.query(
       "INSERT INTO measurements2 (device_id, timestamp, temperature, humidity, waterleak) VALUES ($1, $2, $3, $4, $5)",
-      [data.deviceInfo.devEui, data.time, data.object.temperature, data.object.humidity, data.object.waterleak],
+      [data.deviceInfo.devEui, data.rxInfo[0].nsTime, data.object.temperature, data.object.humidity, data.object.waterleak],
       (err) => {
         if (err) {
           console.error("Error inserting data into the database", err);
