@@ -30,9 +30,9 @@ export default function DayPickerInside() {
         console.error('Error fetching data from database:', error);
       }
     };
-
     fetchDataFromDatabase();
   }, [selected]);
+  
 
   function goToHome() {
     navigate("/");
@@ -152,7 +152,7 @@ export default function DayPickerInside() {
                 }
               ],
             }}
-            options={{
+            options={{ maintainAspectRatio: false,
               scales: {
                 y: {
                   ticks: {
@@ -164,7 +164,6 @@ export default function DayPickerInside() {
                 },
               },
             }}
-            style={{ width: '100%', maxWidth: '700px', maxHeight: '200px', margin: 'auto' }}
           />
           </div>
           <div className='dayPicker'>

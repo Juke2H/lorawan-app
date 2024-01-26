@@ -13,6 +13,7 @@ export default function DayPickerInside() {
   const [data, setData] = useState(null);
   const [isDataVisible, setDataVisibility] = useState(false)
   const navigate = useNavigate();
+  const [chartInstance, setChartInstance] = useState(null);
 
   useEffect(() => {
     const fetchDataFromDatabase = async () => {
@@ -33,6 +34,7 @@ export default function DayPickerInside() {
 
     fetchDataFromDatabase();
   }, [selected]);
+  
 
   function goToHome() {
     navigate("/");
@@ -152,7 +154,7 @@ export default function DayPickerInside() {
                 }
               ],
             }}
-            options={{
+            options={{ maintainAspectRatio: false,
               scales: {
                 y: {
                   ticks: {
@@ -164,7 +166,6 @@ export default function DayPickerInside() {
                 },
               },
             }}
-            style={{ width: '100%', maxWidth: '700px', maxHeight: '200px', margin: 'auto' }}
           />
           </div>
           <div className='dayPicker'>
