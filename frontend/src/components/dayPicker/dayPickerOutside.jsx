@@ -7,12 +7,14 @@ import 'react-day-picker/dist/style.css';
 import { useNavigate } from "react-router-dom";
 import { Line } from "react-chartjs-2";
 import { Chart as ChartJS } from "chart.js/auto";
+import io from 'socket.io-client';
 
 export default function DayPickerInside() {
   const [selected, setSelected] = useState(new Date());
   const [data, setData] = useState(null);
   const [isDataVisible, setDataVisibility] = useState(false)
   const navigate = useNavigate();
+  const socket = io('http://localhost:3000');
 
   useEffect(() => {
     const fetchDataFromDatabase = async () => {
@@ -29,11 +31,18 @@ export default function DayPickerInside() {
       } catch (error) {
         console.error('Error fetching data from database:', error);
       }
+      socket.on('dataUpdated', () => {
+        fetchDataFromDatabase();
+      });
     };
     fetchDataFromDatabase();
-  }, [selected]);
-  
 
+    return () => {
+      socket.off('dataUpdated');
+    };
+  }, [selected]);
+
+  
   function goToHome() {
     navigate("/");
   }
@@ -134,7 +143,6 @@ export default function DayPickerInside() {
       </div>
       <div className='dayPicker'>
         <h4>Lämpötilan keskiarvo: {calculateAverageTemperature()}°C</h4>
-      
       </div>
         <div className='chart'>
           <Line

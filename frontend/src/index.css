@@ -14,6 +14,10 @@ h1 {
   line-height: 1.1;
 }
 
+body {
+  overflow-y: scroll;
+}
+
 button {
   border-radius: 8px;
   border: none;

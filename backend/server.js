@@ -1,5 +1,8 @@
 const express = require('express');
+const http = require('http');
+const socketIo = require('socket.io');
 const cors = require('cors');
+const path = require('path');
 const mqtt = require('mqtt');
 const { Pool } = require('pg');
 
@@ -14,11 +17,24 @@ const pool = new Pool({
 })
 
 const app = express();
+const server = http.createServer(app);
 
-app.use(cors());
+const corsOptions = {
+  origin: 'http://localhost:8000',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  optionsSuccessStatus: 204,
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
-const port = process.env.port || 3000;
+const io = socketIo(server, {
+  cors: corsOptions,
+});
+
+const socketIoPort = 3001;
+
 // MQTT connection
 // Fill in
 const mqttClient = mqtt.connect("mqtt://mosquitto:1883/"); // Replace with your MQTT broker URL
@@ -43,6 +59,7 @@ mqttClient.on("message", (topic, message) => {
   // Assuming the message is in JSON format
   const data = JSON.parse(message.toString());
   console.log(data);
+  io.emit('dataUpdated');
 
   // Insert data into PostgreSQL database
   // Fill in
@@ -89,11 +106,6 @@ mqttClient.on("message", (topic, message) => {
       }
     );
   };
-});
-
-// Start the server
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
 });
 
 // Get Queries
@@ -184,6 +196,12 @@ app.get('/byDateOutside', async (req, res) => {
     console.error('Error executing database query:', error);
     res.status(500).json({ error: 'Internal server error', details: error.message });
   }
+});
+
+const port = process.env.PORT || 3000;
+server.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Socket.IO server is running on http://localhost:${socketIoPort}`);
 });
 
 app.get('/', (request, response) => {
