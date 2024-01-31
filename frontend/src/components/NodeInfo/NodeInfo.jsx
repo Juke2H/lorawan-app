@@ -1,4 +1,4 @@
-import './dayPicker.css'
+import './NodeInfo.css'
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { fi } from "date-fns/locale"
@@ -9,7 +9,7 @@ import { Line } from "react-chartjs-2";
 import { Chart as ChartJS } from "chart.js/auto";
 import io from 'socket.io-client';
 
-export default function DayPickerInside() {
+export default function NodeInfo({ isOutside }) {
   const [selected, setSelected] = useState(new Date());
   const [data, setData] = useState(null);
   const [isDataVisible, setDataVisibility] = useState(false)
@@ -23,8 +23,9 @@ export default function DayPickerInside() {
           setData(null);
           return;
         }
+        const endpoint = isOutside ? 'byDateOutside' : 'byDateInside';
         const formattedDate = format(selected, 'yyyy-MM-dd');
-        const response = await fetch(`http://localhost:3000/byDateInside?date=${formattedDate}`);
+        const response = await fetch(`http://localhost:3000/${endpoint}?date=${formattedDate}`);
         const result = await response.json();
 
         setData(result);
@@ -40,7 +41,7 @@ export default function DayPickerInside() {
     return () => {
       socket.off('dataUpdated');
     };
-  }, [selected]);
+  }, [selected, isOutside]);
 
   
   function goToHome() {
@@ -110,11 +111,11 @@ export default function DayPickerInside() {
   if (!selected || (data && data.length === 0))
     return (
       <div>
-      <div className='dayPicker'>
+      <div className='NodeInfo'>
         <button className='dayPickerButtons' onClick={() => goToHome()}>Takaisin</button>
         <h3>Valitse päivä</h3> <br></br>
         </div>
-        <div className='asd'>
+        <div className='dayPicker'>
         <DayPicker locale={fi} ISOWeek showOutsideDays fixedWeeks
           mode="single"
           selected={selected}
@@ -122,7 +123,7 @@ export default function DayPickerInside() {
           
         />
         </div>
-        <div className='dayPicker'>
+        <div className='NodeInfo'>
           <h4>Ei tietoja</h4>
           </div>
       </div>
@@ -130,18 +131,18 @@ export default function DayPickerInside() {
 
   return (
     <div>
-    <div className='dayPicker'>
+    <div className='NodeInfo'>
       <button className='dayPickerButtons' onClick={() => goToHome()}>Takaisin</button>
       <h3>Valitse päivä</h3> <br></br>
       </div>
-      <div className='asd'>
+      <div className='dayPicker'>
       <DayPicker locale={fi} ISOWeek showOutsideDays fixedWeeks
         mode="single"
         selected={selected}
         onSelect={setSelected}
       />
       </div>
-      <div className='dayPicker'>
+      <div className='NodeInfo'>
         <h4>Lämpötilan keskiarvo: {calculateAverageTemperature()}°C</h4>
       </div>
         <div className='chart'>
@@ -153,7 +154,7 @@ export default function DayPickerInside() {
                   label: "Lämpötila",
                   data: data && data.map((data) => ({
                     x: formatTimestampForChart(data.timestamp),
-                    y: roundTemperature(data.temperature)
+                    y: (roundTemperature(data.temperature))
                   })),
                   backgroundColor: "#064FF0",
                   borderColor: "#064FF0",
@@ -174,7 +175,7 @@ export default function DayPickerInside() {
             }}
           />
           </div>
-          <div className='dayPicker'>
+          <div className='NodeInfo'>
           <button className='dayPickerButtons' onClick={() => toggleDataVisibility()}>
             {isDataVisible ? 'Piilota datapisteet' : 'Näytä datapisteet'}
           </button>
@@ -185,7 +186,11 @@ export default function DayPickerInside() {
             <h4>{formatTimestamp(item.timestamp)}</h4>
             <p>Lämpötila: {roundTemperature(item.temperature)}°C</p>
             <p>Kosteus: {item.humidity}%</p>
-            <p>Vesivahinko: {waterLeak(item.waterleak)}</p>
+            {isOutside ? (
+        <p>Ilmanpaine: {item.pressure} mbar</p>
+      ) : (
+        <p>Vesivahinko: {waterLeak(item.waterleak)}</p>
+      )}
           </div>
         ))}
       </div>

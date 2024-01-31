@@ -22,7 +22,7 @@ const LatestMeasurement = () => {
 
         if (!ignore) {
           setResponseBody(response.data);
-          const { id, device_id, timestamp, ...newObj } = response.data[0];
+          const { id, device_id, ...newObj } = response.data[0];
           console.log(newObj);
           setNode(newObj);
           console.log("Response Data:", JSON.stringify(response.data));
@@ -58,7 +58,7 @@ const LatestMeasurement = () => {
 
         if (!ignore) {
           setResponseBody(response.data);
-          const { id, device_id, timestamp, ...newObj } = response.data[0];
+          const { id, device_id, ...newObj } = response.data[0];
           console.log(newObj);
           setNode(newObj);
           console.log("Response Data:", JSON.stringify(response.data));
@@ -79,13 +79,14 @@ const LatestMeasurement = () => {
 
   if (isLoading) {
     return <div>Loading...</div>;
-  } else if (Object.values(node).length === 3) {
+  } else if (Object.values(node).length === 4) {
     return (
       <div>
-        <div className="nodesLatestMeasurement">
-          <div className="nodeZero">{Object.values(node)[0]}</div>
-          <div className="nodeOne">{Object.values(node)[1]}</div>
-          <div className="nodeTwo">{Object.values(node)[2]}</div>
+        <div className="textInfo">{Object.values(node)[0]}</div>
+        <div className="nodeInfo">
+          <div className="nodeZero">{Object.values(node)[1]}</div>
+          <div className="nodeOne">{Object.values(node)[2]}</div>
+          <div className="nodeTwo">{Object.values(node)[3]}</div>
           <div className="nodeThree"></div>
         </div>
       </div>

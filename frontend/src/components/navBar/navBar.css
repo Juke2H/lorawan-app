@@ -1,0 +1,20 @@
+.header {
+    text-align: center;
+}
+
+.homeButtons {
+    box-sizing: border-box;
+    /* background-color: gray; */
+    margin: 4px;
+}
+
+.navbar {
+    min-width: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* .navbar:a {
+     background-color:grey; 
+} */
