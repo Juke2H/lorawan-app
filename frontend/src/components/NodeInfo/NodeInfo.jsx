@@ -14,39 +14,41 @@ export default function NodeInfo({ isOutside }) {
   const [data, setData] = useState(null);
   const [isDataVisible, setDataVisibility] = useState(false)
   const navigate = useNavigate();
-  const socket = io('http://localhost:3000');
-
+  
   useEffect(() => {
-    const fetchDataFromDatabase = async () => {
-      try {
-        if (!selected) {
-          setData(null);
-          return;
-        }
-        const endpoint = isOutside ? 'byDateOutside' : 'byDateInside';
-        const formattedDate = format(selected, 'yyyy-MM-dd');
-        const response = await fetch(`http://localhost:3000/${endpoint}?date=${formattedDate}`);
-        const result = await response.json();
-
-        setData(result);
-      } catch (error) {
-        console.error('Error fetching data from database:', error);
-      }
-      socket.on('dataUpdated', () => {
-        fetchDataFromDatabase();
-      });
-    };
     fetchDataFromDatabase();
-
-    return () => {
-      socket.off('dataUpdated');
-    };
   }, [selected, isOutside]);
 
+  useEffect(() => {
+    const socket = io('http://localhost:3000');
+
+    socket.on('connect', () => {
+      console.log("SOCKET CONNECTION", socket.connected)
+    });
   
-  function goToHome() {
-    navigate("/");
-  }
+    socket.on('disconnect', () => {
+      console.log("SOCKET CONNECTION", socket.connected)
+    });
+
+  socket.on('dataUpdated', fetchDataFromDatabase);
+  }, []);
+
+  const fetchDataFromDatabase = async () => {
+    try {
+      if (!selected) {
+        setData(null);
+        return;
+      }
+      const endpoint = isOutside ? 'byDateOutside' : 'byDateInside';
+      const formattedDate = format(selected, 'yyyy-MM-dd');
+      const response = await fetch(`http://localhost:3000/${endpoint}?date=${formattedDate}`);
+      const result = await response.json();
+
+      setData(result);
+    } catch (error) {
+      console.error('Error fetching data from database:', error);
+    }
+  };
 
   function toggleDataVisibility() {
     setDataVisibility(!isDataVisible);
@@ -90,11 +92,11 @@ export default function NodeInfo({ isOutside }) {
 
   function roundTemperature(temperature) {
     if (!temperature && temperature !== 0) {
-    return 0;
-  }
+      return 0;
+    }
     const roundedTemperature = (Math.round(parseFloat(temperature) * 2) / 2).toFixed(1);
     const strippedTemperature = parseFloat(roundedTemperature); // Poista ylimääräiset desimaalit
-  
+
     if (isNaN(strippedTemperature)) {
       return 0;
     }
@@ -111,89 +113,89 @@ export default function NodeInfo({ isOutside }) {
   if (!selected || (data && data.length === 0))
     return (
       <div>
-      <div className='NodeInfo'>
-        <button className='dayPickerButtons' onClick={() => goToHome()}>Takaisin</button>
-        <h3>Valitse päivä</h3> <br></br>
-        </div>
         <div className='dayPicker'>
-        <DayPicker locale={fi} ISOWeek showOutsideDays fixedWeeks
-          mode="single"
-          selected={selected}
-          onSelect={setSelected}
-          
-        />
+          <DayPicker locale={fi} ISOWeek showOutsideDays fixedWeeks
+            mode="single"
+            selected={selected}
+            month={selected}
+            onMonthChange={(month) => setSelected(month)}
+            onSelect={(date) => {
+              setSelected(date);
+            }}
+          />
         </div>
         <div className='NodeInfo'>
           <h4>Ei tietoja</h4>
-          </div>
+        </div>
       </div>
     )
 
   return (
     <div>
-    <div className='NodeInfo'>
-      <button className='dayPickerButtons' onClick={() => goToHome()}>Takaisin</button>
-      <h3>Valitse päivä</h3> <br></br>
-      </div>
       <div className='dayPicker'>
-      <DayPicker locale={fi} ISOWeek showOutsideDays fixedWeeks
-        mode="single"
-        selected={selected}
-        onSelect={setSelected}
-      />
+        <DayPicker locale={fi} ISOWeek showOutsideDays fixedWeeks
+          mode="single"
+          selected={selected}
+          month={selected}
+          onMonthChange={(month) => setSelected(month)}
+          onSelect={(date) => {
+            setSelected(date);
+          }}
+        />
       </div>
       <div className='NodeInfo'>
         <h4>Lämpötilan keskiarvo: {calculateAverageTemperature()}°C</h4>
       </div>
-        <div className='chart'>
-          <Line
-            data={{
-              labels: data && data.map((data) => formatTimestampForChart(data.timestamp)),
-              datasets: [
-                {
-                  label: "Lämpötila",
-                  data: data && data.map((data) => ({
-                    x: formatTimestampForChart(data.timestamp),
-                    y: (roundTemperature(data.temperature))
-                  })),
-                  backgroundColor: "#064FF0",
-                  borderColor: "#064FF0",
-                }
-              ],
-            }}
-            options={{ maintainAspectRatio: false,
-              scales: {
-                y: {
-                  ticks: {
-                    stepSize: 0.5,
-                    callback: function (value, index, values) { // Poista desimaalit, jos ne ovat nolla
-                      return value % 1 === 0 ? value.toFixed(0) : value.toFixed(1);
-                    },
+      <div className='chart'>
+        <Line
+          data={{
+            labels: data && data.map((data) => formatTimestampForChart(data.timestamp)),
+            datasets: [
+              {
+                label: "Lämpötila",
+                data: data && data.map((data) => ({
+                  x: formatTimestampForChart(data.timestamp),
+                  y: (roundTemperature(data.temperature))
+                })),
+                backgroundColor: "#064FF0",
+                borderColor: "#064FF0",
+              }
+            ],
+          }}
+          options={{
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                ticks: {
+                  stepSize: 0.5,
+                  callback: function (value, index, values) { // Poista desimaalit, jos ne ovat nolla
+                    return value % 1 === 0 ? value.toFixed(0) : value.toFixed(1);
                   },
                 },
               },
-            }}
-          />
-          </div>
-          <div className='NodeInfo'>
-          <button className='dayPickerButtons' onClick={() => toggleDataVisibility()}>
-            {isDataVisible ? 'Piilota datapisteet' : 'Näytä datapisteet'}
-          </button>
-          </div>
-          <div className='dataPointsContainer'>
+            },
+          }}
+        />
+      </div>
+      <div className='NodeInfo'>
+        <button className='dayPickerButtons' onClick={() => toggleDataVisibility()}>
+          {isDataVisible ? 'Piilota datapisteet' : 'Näytä datapisteet'}
+        </button>
+      </div>
+      <div className='dataPointsContainer'>
         {isDataVisible && data && data.map(item => (
           <div key={item.id} className='dataPoint'>
             <h4>{formatTimestamp(item.timestamp)}</h4>
             <p>Lämpötila: {roundTemperature(item.temperature)}°C</p>
             <p>Kosteus: {item.humidity}%</p>
             {isOutside ? (
-        <p>Ilmanpaine: {item.pressure} mbar</p>
-      ) : (
-        <p>Vesivahinko: {waterLeak(item.waterleak)}</p>
-      )}
+              <p>Ilmanpaine: {item.pressure} mbar</p>
+            ) : (
+              <p>Vesivahinko: {waterLeak(item.waterleak)}</p>
+            )}
           </div>
         ))}
       </div>
-      </div>
+    </div>
   );
 }

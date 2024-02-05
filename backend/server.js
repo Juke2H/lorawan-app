@@ -2,18 +2,20 @@ const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 const cors = require('cors');
-const path = require('path');
 const mqtt = require('mqtt');
+require('dotenv').config();
 const { Pool } = require('pg');
+
+console.log(process.env, typeof(process.env.MQTT_URL))
 
 // PostgreSQL connection pool
 // Fill in
 const pool = new Pool({
-  user: "user",
-  host: "postgres_riveria",
-  database: "measurements",
-  password: "password",
-  port: 5432,
+  user: process.env.POSTGRES_USER,
+  host: process.env.POSTGRES_HOST,
+  database: process.env.POSTGRES_DB,
+  password: process.env.POSTGRES_PASSWORD,
+  port: process.env.POSTGRES_PORT,
 })
 
 const app = express();
@@ -21,7 +23,7 @@ const server = http.createServer(app);
 
 const corsOptions = {
   origin: 'http://localhost:8000',
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  methods: 'GET',
   credentials: true,
   optionsSuccessStatus: 204,
 };
@@ -37,7 +39,7 @@ const socketIoPort = 3001;
 
 // MQTT connection
 // Fill in
-const mqttClient = mqtt.connect("mqtt://mosquitto:1883/"); // Replace with your MQTT broker URL
+const mqttClient = mqtt.connect(process.env.MQTT_URL); // Replace with your MQTT broker URL
 
 // Test the database connection
 pool.query("SELECT NOW()", (err, res) => {
@@ -51,7 +53,7 @@ pool.query("SELECT NOW()", (err, res) => {
 // Handle MQTT messages
 // Fill in
 mqttClient.on("connect", () => {
-  mqttClient.subscribe("application/66293ac8-9d09-45be-be78-adbe84fbb267/device/a81758fffe0aa834/event/up"); // Replace with your MQTT topic
+  mqttClient.subscribe(process.env.MQTT_TOPIC); // Replace with your MQTT topic
   console.log("Connected to MQTT broker");
 });
 
