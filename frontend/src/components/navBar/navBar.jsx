@@ -36,12 +36,12 @@ export default function NavBar() {
 
   //return
   return (
-    <>
+    <div className="margin">
       <nav>
-        <h1 className="header">Lorawan Anturit</h1>
         <div className="navbar">
-          <Link to="/dayPickerInside" className="homeButtons" onClick={menuOne}>
+          <Link to="/NodeInfoInside" className="homeButtons" onClick={menuOne}>
             <button
+              className="navBtn"
               style={{
                 backgroundColor: activeOne ? "chartreuse" : "red",
               }}
@@ -50,11 +50,12 @@ export default function NavBar() {
             </button>
           </Link>
           <Link
-            to="/dayPickerOutside"
+            to="/NodeInfoOutside"
             className="homeButtons"
             onClick={menuTwo}
           >
             <button
+              className="navBtn"
               style={{
                 backgroundColor: activeTwo ? "chartreuse" : "red",
               }}
@@ -63,11 +64,12 @@ export default function NavBar() {
             </button>
           </Link>
           <Link
-            to="/latestMeasurement"
+            to="/dashBoard"
             className="homeButtons"
             onClick={menuThree}
           >
             <button
+              className="navBtn"
               style={{
                 backgroundColor: activeThree ? "chartreuse" : "red",
               }}
@@ -78,6 +80,6 @@ export default function NavBar() {
         </div>
       </nav>
       <Outlet />
-    </>
+    </div>
   );
 }

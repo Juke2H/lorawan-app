@@ -5,10 +5,10 @@ export default function Home() {
   const navigate = useNavigate();
 
   function goDayPickerInside() {
-    navigate("/dayPickerInside");
+    navigate("/NodeInfoInside");
   }
   function goDayPickerOutside() {
-    navigate("/dayPickerOutside");
+    navigate("/NodeInfoOutside");
   }
   function goLatestMeasurement() {
     navigate("/LatestMeasurement");
