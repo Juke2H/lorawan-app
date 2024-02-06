@@ -1,6 +1,19 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./LatestMeasurement.css";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { Line } from "react-chartjs-2";
+import { faker } from "@faker-js/faker";
+import DayPickerInside from "../dayPicker/dayPickerInside";
+import "./DashBoard.css";
 
 const LatestMeasurement = () => {
   const [responseBody, setResponseBody] = useState({});
@@ -77,6 +90,78 @@ const LatestMeasurement = () => {
     };
   }, []);
 
+  ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend
+  );
+
+  //data.map timestamp?
+  const labels = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+  ];
+
+  const data = {
+    labels,
+    datasets: [
+      {
+        label: "Dataset 1",
+        //data.map data?
+        data: labels.map(() => faker.number.int({ min: -1000, max: 1000 })),
+        borderColor: "rgb(255, 99, 132)",
+        backgroundColor: "rgba(255, 99, 132, 0.5)",
+      },
+      {
+        label: "Dataset 2",
+        data: labels.map(() => faker.number.int({ min: -1000, max: 1000 })),
+        borderColor: "rgb(53, 162, 235)",
+        backgroundColor: "rgba(53, 162, 235, 0.5)",
+      },
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: "top",
+        display: false,
+      },
+      title: {
+        display: true,
+        text: "Chart.js Line Chart",
+      },
+      tooltip: {
+        callbacks: {
+          label: function (context) {
+            let label = context.parsed.y + " °C";
+            return label;
+          },
+        },
+      },
+    },
+    scales: {
+      y: {
+        ticks: {
+          callback: function (value, index, ticks) {
+            return value + " °C";
+          },
+        },
+      },
+    },
+  };
+
   if (isLoading) {
     return <div>Loading...</div>;
   } else if (Object.values(node).length === 4) {
@@ -84,10 +169,23 @@ const LatestMeasurement = () => {
       <div>
         <div className="textInfo">{Object.values(node)[0]}</div>
         <div className="nodeInfo">
-          <div className="nodeZero">{Object.values(node)[1]}</div>
-          <div className="nodeOne">{Object.values(node)[2]}</div>
-          <div className="nodeTwo">{Object.values(node)[3]}</div>
+          <div className="nodeZero">
+            Lämpötila <br />
+            {Object.values(node)[1]}
+          </div>
+          <div className="nodeOne">
+            Kosteus <br />
+            {Object.values(node)[2]}
+          </div>
+          <div className="nodeTwo">
+            Vesivuoto <br />
+            {Object.values(node)[3]}
+          </div>
           <div className="nodeThree"></div>
+        </div>
+        <div className="cldr">
+          <div className="käyrä"><Line options={options} data={data} /></div>
+          <div className="kalenter"><DayPickerInside /></div>
         </div>
       </div>
     );

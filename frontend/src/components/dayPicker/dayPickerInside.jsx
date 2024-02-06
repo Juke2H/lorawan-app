@@ -34,10 +34,6 @@ export default function DayPickerInside() {
     fetchDataFromDatabase();
   }, [selected]);
 
-  function goToHome() {
-    navigate("/");
-  }
-
   function toggleDataVisibility() {
     setDataVisibility(!isDataVisible);
   }
@@ -89,11 +85,9 @@ export default function DayPickerInside() {
   }
 
 
-  if (selected && data && data.length === 0)
+  /* if (!selected || (data && data.length === 0) || data === null)
     return (
       <div>
-        <button className='dayPickerButtons' onClick={() => goToHome()}>Takaisin</button>
-        <h3>Valitse päivä</h3> <br></br>
         <DayPicker locale={fi} ISOWeek showOutsideDays fixedWeeks
           mode="single"
           selected={selected}
@@ -103,19 +97,17 @@ export default function DayPickerInside() {
           <h4>Ei tietoja</h4>
         </div>
       </div>
-    )
+    ) */
 
   return (
     <div className='dayPicker'>
-      <button className='dayPickerButtons' onClick={() => goToHome()}>Takaisin</button>
-      <h3>Valitse päivä</h3> <br></br>
       <DayPicker locale={fi} ISOWeek showOutsideDays fixedWeeks
         mode="single"
         selected={selected}
         onSelect={setSelected}
       />
-      <div>
-        <h4>Lämpötilan keskiarvo: {calculateAverageTemperature()}°C</h4>
+      {/* <div>
+      <h4>Lämpötilan keskiarvo: {calculateAverageTemperature()}°C</h4>
       </div>
       <div>
         <div>
@@ -144,7 +136,7 @@ export default function DayPickerInside() {
             <p>Vesivahinko: {waterLeak(item.waterleak)}</p>
           </div>
         ))}
-      </div>
-    </div>
+      </div> */}
+        </div>
   );
 }
