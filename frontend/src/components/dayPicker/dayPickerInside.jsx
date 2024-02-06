@@ -109,10 +109,6 @@ export default function DayPickerInside() {
   if (!selected || (data && data.length === 0))
     return (
       <div>
-      <div className='dayPicker'>
-        <button className='dayPickerButtons' onClick={() => goToHome()}>Takaisin</button>
-        <h3>Valitse päivä</h3> <br></br>
-        </div>
         <div className='asd'>
         <DayPicker locale={fi} ISOWeek showOutsideDays fixedWeeks
           mode="single"
@@ -129,10 +125,6 @@ export default function DayPickerInside() {
 
   return (
     <div>
-    <div className='dayPicker'>
-      <button className='dayPickerButtons' onClick={() => goToHome()}>Takaisin</button>
-      <h3>Valitse päivä</h3> <br></br>
-      </div>
       <div className='asd'>
       <DayPicker locale={fi} ISOWeek showOutsideDays fixedWeeks
         mode="single"
@@ -143,7 +135,7 @@ export default function DayPickerInside() {
       <div className='dayPicker'>
         <h4>Lämpötilan keskiarvo: {calculateAverageTemperature()}°C</h4>
       </div>
-        <div className='chart'>
+       {/* <div className='chart'>
           <Line
             data={{
               labels: data && data.map((data) => formatTimestampForChart(data.timestamp)),
@@ -187,7 +179,7 @@ export default function DayPickerInside() {
             <p>Ilmanpaine: {item.pressure} mbar</p>
           </div>
         ))}
-      </div>
+        </div> */}
       </div>
   );
 }
