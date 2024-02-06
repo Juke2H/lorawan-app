@@ -36,12 +36,12 @@ export default function NavBar() {
 
   //return
   return (
-    <>
+    <div className="margin">
       <nav>
-        <h1 className="header">Lorawan Anturit</h1>
         <div className="navbar">
           <Link to="/NodeInfoInside" className="homeButtons" onClick={menuOne}>
             <button
+              className="navBtn"
               style={{
                 backgroundColor: activeOne ? "chartreuse" : "red",
               }}
@@ -55,6 +55,7 @@ export default function NavBar() {
             onClick={menuTwo}
           >
             <button
+              className="navBtn"
               style={{
                 backgroundColor: activeTwo ? "chartreuse" : "red",
               }}
@@ -68,6 +69,7 @@ export default function NavBar() {
             onClick={menuThree}
           >
             <button
+              className="navBtn"
               style={{
                 backgroundColor: activeThree ? "chartreuse" : "red",
               }}
@@ -78,6 +80,6 @@ export default function NavBar() {
         </div>
       </nav>
       <Outlet />
-    </>
+    </div>
   );
 }

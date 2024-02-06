@@ -6,8 +6,6 @@ const mqtt = require('mqtt');
 require('dotenv').config();
 const { Pool } = require('pg');
 
-console.log(process.env, typeof(process.env.MQTT_URL))
-
 // PostgreSQL connection pool
 // Fill in
 const pool = new Pool({
