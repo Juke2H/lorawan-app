@@ -1,15 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Root from "./Root.jsx";
-import Home from "./components/home/home.jsx";
 import NavBar from "./components/navBar/navBar.jsx";
-import Test from "./components/test/test.jsx";
-import Test2 from "./components/test/test2.jsx";
-import NodeInfo from "./components/nodeinfo/NodeInfo.jsx";
+import NodeInfo from "./components/NodeInfo/NodeInfo.jsx";
 import DashBoard from "./components/dashBoard/DashBoard.jsx";
-import DayPickerInside from "./components/dayPicker/dayPickerInside.jsx";
-import DayPickerOutside from "./components/dayPicker/dayPickerOutside.jsx";
 import "./index.css";
 
 const router = createBrowserRouter([

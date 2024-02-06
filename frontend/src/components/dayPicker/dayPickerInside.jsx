@@ -1,4 +1,3 @@
-import './dayPicker.css'
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { fi } from "date-fns/locale"

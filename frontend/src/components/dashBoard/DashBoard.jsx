@@ -15,7 +15,7 @@ import { faker } from "@faker-js/faker";
 import DayPickerInside from "../dayPicker/dayPickerInside";
 import "./DashBoard.css";
 
-const LatestMeasurement = () => {
+const DashBoard = () => {
   const [responseBody, setResponseBody] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [node, setNode] = useState({});
