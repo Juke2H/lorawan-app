@@ -1,15 +1,22 @@
 import { Route, Routes } from "react-router-dom";
 import Home from "./components/home/home"
-import NodeInfo from "./components/NodeInfo/NodeInfo.jsx";
-import LatestMeasurement from "./components/latestMeasurement/LatestMeasurement";
+import Test from "./components/test/test"
+import Test2 from "./components/test/test2"
+import NodeInfo from "./components/nodeinfo/NodeInfo"
+import DashBoard from "./components/dashBoard/DashBoard";
+import DayPickerInside from "./components/dayPicker/dayPickerInside"
+import DayPickerOutside from "./components/dayPicker/dayPickerOutside"
 
 export default function Root() {
   return (
     <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/LatestMeasurement" element={<LatestMeasurement />} />
-        <Route path="/NodeInfoInside" element={<NodeInfo isOutside={false}/>} />
-        <Route path="/NodeInfoOutside" element={<NodeInfo isOutside={true}/>} />
+        <Route path="/test" element={<Test />} />
+        <Route path="/test2" element={<Test2 />} />
+        <Route path="/NodeInfo" element={<NodeInfo />} />
+        <Route path="/dashBoard" element={<DashBoard />} />
+        <Route path="/dayPickerInside" element={<DayPickerInside />} />
+        <Route path="/dayPickerOutside" element={<DayPickerOutside />} />
     </Routes>
   );
 }
