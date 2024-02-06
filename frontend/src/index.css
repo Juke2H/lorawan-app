@@ -4,14 +4,14 @@
   font-weight: 400;
   text-align: center;
 
-  /* color-scheme: light dark;
+   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
    background-color: #242424; 
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale; */
+  -moz-osx-font-smoothing: grayscale; 
 }
 
 body {
@@ -19,12 +19,12 @@ body {
   height: 75%;
 }
 
-/* h1 {
+ h1 {
   font-size: 3.2em;
   line-height: 1.1;
-} */
+} 
 
-/* button {
+ button {
   border-radius: 8px;
   border: none;
   padding: 10px 32px;
@@ -35,16 +35,16 @@ body {
   cursor: pointer;
   transition: border-color 0.25s;
    margin: 5px;
-} */
-/* button:hover {
+} 
+ button:hover {
   border-color: #646cff;
-} */
-/* button:focus,
+} 
+button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
-} */
+}
 
-/* @media (prefers-color-scheme: light) {
+@media (prefers-color-scheme: light) {
   :root {
     color: #213547;
     background-color: #ffffff;
@@ -55,4 +55,4 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
-} */
+}
