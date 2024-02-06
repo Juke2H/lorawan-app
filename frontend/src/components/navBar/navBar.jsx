@@ -40,7 +40,7 @@ export default function NavBar() {
       <nav>
         <h1 className="header">Lorawan Anturit</h1>
         <div className="navbar">
-          <Link to="/dayPickerInside" className="homeButtons" onClick={menuOne}>
+          <Link to="/NodeInfoInside" className="homeButtons" onClick={menuOne}>
             <button
               style={{
                 backgroundColor: activeOne ? "chartreuse" : "red",
@@ -50,7 +50,7 @@ export default function NavBar() {
             </button>
           </Link>
           <Link
-            to="/dayPickerOutside"
+            to="/NodeInfoOutside"
             className="homeButtons"
             onClick={menuTwo}
           >

@@ -10,10 +10,8 @@ services:
     ports: 
       - 5435:5432
     restart: always
-    environment:
-      POSTGRES_PASSWORD: password
-      POSTGRES_USER: user
-      POSTGRES_DB: measurements
+    env_file:
+      - ./backend/.env
     volumes:
         - ./db/init:/docker-entrypoint-initdb.d
         - dbvolume:/var/lib/postgresql/data
@@ -23,9 +21,10 @@ services:
     build: backend
     depends_on:
       - db
-    environment:
-      NODE_ENV: production
-      # DEBUG: mqttjs*
+    env_file:
+      - ./backend/.env  
+    # environment:
+    #   DEBUG: mqttjs*
     ports:
       - 3000:3000
     volumes: 
