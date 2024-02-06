@@ -221,4 +221,4 @@ const LatestMeasurement = () => {
   ); */
 };
 
-export default LatestMeasurement;
+export default DashBoard;

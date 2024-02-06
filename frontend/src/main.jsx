@@ -7,7 +7,7 @@ import NavBar from "./components/navBar/navBar.jsx";
 import Test from "./components/test/test.jsx";
 import Test2 from "./components/test/test2.jsx";
 import NodeInfo from "./components/nodeinfo/NodeInfo.jsx";
-import LatestMeasurement from "./components/latestMeasurement/LatestMeasurement.jsx";
+import DashBoard from "./components/dashBoard/DashBoard.jsx";
 import DayPickerInside from "./components/dayPicker/dayPickerInside.jsx";
 import DayPickerOutside from "./components/dayPicker/dayPickerOutside.jsx";
 import "./index.css";
@@ -42,8 +42,8 @@ const router = createBrowserRouter([
         element: <NodeInfo />,
       },
       {
-        path: "latestMeasurement",
-        element: <LatestMeasurement />,
+        path: "dashBoard",
+        element: <DashBoard />,
       },
     ],
   },

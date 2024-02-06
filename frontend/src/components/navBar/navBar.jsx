@@ -64,7 +64,7 @@ export default function NavBar() {
             </button>
           </Link>
           <Link
-            to="/latestMeasurement"
+            to="/dashBoard"
             className="homeButtons"
             onClick={menuThree}
           >
