@@ -14,11 +14,11 @@ const router = createBrowserRouter([
     children: [
       {
         path: "NodeInfoInside",
-        element: <NodeInfo isOutside={false}/>,
+        element: <DashBoard isOutside={false}/>,
       },
       {
         path: "NodeInfoOutside",
-        element: <NodeInfo isOutside={true}/>,
+        element: <DashBoard isOutside={true}/>,
       },
       {
         path: "dashBoard",

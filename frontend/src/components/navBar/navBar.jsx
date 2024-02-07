@@ -46,7 +46,7 @@ export default function NavBar() {
                 backgroundColor: activeOne ? "chartreuse" : "red",
               }}
             >
-              Sisälämpökalenteri
+              Sisälämpömittari
             </button>
           </Link>
           <Link
@@ -60,7 +60,7 @@ export default function NavBar() {
                 backgroundColor: activeTwo ? "chartreuse" : "red",
               }}
             >
-              Ulkolämpökalenteri
+              Ulkolämpömittari
             </button>
           </Link>
           <Link
@@ -74,7 +74,7 @@ export default function NavBar() {
                 backgroundColor: activeThree ? "chartreuse" : "red",
               }}
             >
-              Sisälämpöviimeisin
+              Dashboard
             </button>
           </Link>
         </div>
