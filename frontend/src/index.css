@@ -14,10 +14,10 @@
   -moz-osx-font-smoothing: grayscale; 
 }
 
-body {
+/* body {
   width: 75%;
   height: 75%;
-}
+} */
 
  h1 {
   font-size: 3.2em;

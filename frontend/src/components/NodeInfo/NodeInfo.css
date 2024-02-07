@@ -2,32 +2,42 @@
   background-color: rgb(150, 147, 147);
 }
 
-.NodeInfo {
+/* .NodeInfo {
   width: 100%;
   margin: 0 auto;
   text-align: center;
   display: flexbox;
   max-width: 1280px;
+} */
+
+.cal {
+  display:flex;
+  flex-direction:row;
+  width:100%;
 }
 
 .dayPicker {
-  width: 100%;
-  margin: 0 auto;
-  text-align: center;
+  /* width: 100%; */
+  /* margin: 0 auto;
+  text-align: center; */
   display: flex;
-  justify-content: center;
-  align-items: center;
-  max-width: 1280px;
+  justify-content: right;
+  /* align-items: center; */
+  /* max-width: 1280px; */
 }
 
 .chart {
-  width: 100%;
-  max-width: 700px;
-  margin: auto;
+  /* width: 100%; */
+  /* max-width: 700px; */
+  /* margin: auto; */
   text-align: center;
   display: flex;
-  max-height: 300px;
-  justify-content: center;
+  /* max-height: 300px; */
+  justify-content: left;
+}
+
+.dayPicker, .chart {
+  flex: auto;
 }
 
 .chart canvas {
