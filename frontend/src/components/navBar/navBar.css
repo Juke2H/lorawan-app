@@ -16,6 +16,8 @@
 
 .navbar {
   width: 100%;
+  max-width: 1000px;
+  min-width: 800px;
   display: flex;
   justify-content: space-between;
 }
@@ -27,4 +29,6 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  max-width: 1000px;
+  justify-content: center;
 }

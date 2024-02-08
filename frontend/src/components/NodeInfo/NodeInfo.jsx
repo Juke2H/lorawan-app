@@ -136,8 +136,8 @@ export default function NodeInfo({ isOutside }) {
                       x: formatTimestampForChart(data.timestamp),
                       y: roundTemperature(data.temperature),
                     })),
-                  backgroundColor: "#064FF0",
-                  borderColor: "#064FF0",
+                  backgroundColor: "#e21313",
+                  borderColor: "#e21313",
                 },
               ],
             }}
@@ -172,6 +172,13 @@ export default function NodeInfo({ isOutside }) {
             onSelect={(date) => {
               setSelected(date);
             }}
+            modifiersClassNames={{
+              selected: 'my-selected',
+              today: 'my-today',  
+          }}
+          modifiersStyles={{
+            disabled: { fontSize: '75%' }
+          }}
           />
         </div>
       </div>
@@ -200,8 +207,10 @@ export default function NodeInfo({ isOutside }) {
                       x: formatTimestampForChart(data.timestamp),
                       y: roundTemperature(data.temperature),
                     })),
-                  backgroundColor: "#064FF0",
-                  borderColor: "#064FF0",
+                  backgroundColor: "#e21313",
+                  borderColor: "#e21313",
+                  
+                  
                 },
               ],
             }}
@@ -236,6 +245,13 @@ export default function NodeInfo({ isOutside }) {
             onSelect={(date) => {
               setSelected(date);
             }}
+            modifiersClassNames={{
+              selected: 'my-selected',
+              today: 'my-today',
+          }}
+          modifiersStyles={{
+            disabled: { fontSize: '75%' }
+          }}
           />
         </div>
       </div>
@@ -277,6 +293,10 @@ export default function NodeInfo({ isOutside }) {
         <button
           className="dayPickerButtons"
           onClick={() => toggleDataVisibility()}
+          style={{
+            backgroundColor: isDataVisible ? "black" : "#e21313",
+            color: isDataVisible ? "white" : "black"
+          }}
         >
           {isDataVisible ? "Piilota datapisteet" : "Näytä datapisteet"}
         </button>

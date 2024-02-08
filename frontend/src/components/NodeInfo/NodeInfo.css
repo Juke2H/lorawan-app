@@ -1,38 +1,20 @@
-.dayPickerButtons {
-  background-color: rgb(150, 147, 147);
-}
-
-/* .NodeInfo {
-  width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  display: flexbox;
-  max-width: 1280px;
-} */
-
 .cal {
   display:flex;
   flex-direction:row;
   width:100%;
+  max-width: 1000px;
+  min-width: none;
+  justify-content: center;
 }
 
 .dayPicker {
-  /* width: 100%; */
-  /* margin: 0 auto;
-  text-align: center; */
   display: flex;
   justify-content: right;
-  /* align-items: center; */
-  /* max-width: 1280px; */
 }
 
 .chart {
-  /* width: 100%; */
-  /* max-width: 700px; */
-  /* margin: auto; */
   text-align: center;
   display: flex;
-  /* max-height: 300px; */
   justify-content: left;
 }
 
@@ -42,6 +24,7 @@
 
 .chart canvas {
   width: 100%;
+  min-width: 620px;
   height: auto;
 }
 
@@ -53,5 +36,34 @@
 
 .dataPoint {
   border: 1px solid #ddd;
-  padding: 16px;
+  padding: 1px;
+}
+
+.NodeInfo {
+  max-width: 1000px;
+  justify-content: center;
+}
+
+.my-selected:not([disabled]) { 
+  font-weight: bold; 
+  border: 2px solid #e21313;
+  border-color: #e21313;
+  color: #e21313;
+}
+
+.my-selected:hover:not([disabled]) { 
+  border-color: #e21313;
+  color: #e21313;
+}
+.my-today { 
+  font-weight: bold;
+  font-size: 140%; 
+  color: #e21313;
+  background-color: #e21313;
+}
+.rdp {
+  --rdp-accent-color: #dc1818 !important;
+  --rdp-accent-color-dark: #cf5454 !important;
+  --rdp-background-color: #de8080 !important;
+  --rdp-background-color-dark: #e55555 !important;
 }

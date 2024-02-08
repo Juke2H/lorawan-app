@@ -8,7 +8,7 @@ const DashBoard = ({ isOutside }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [node, setNode] = useState({});
 
-  const MINUTE_MS = 60000;
+  const MINUTE_MS = 10000000;
 
   useEffect(() => {
     let ignore = false;

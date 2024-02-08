@@ -43,7 +43,8 @@ export default function NavBar() {
             <button
               className="navBtn"
               style={{
-                backgroundColor: activeOne ? "chartreuse" : "red",
+                backgroundColor: activeOne ? "black" : "#e21313",
+                color: activeOne ? "white" : "black"
               }}
             >
               Sisälämpömittari
@@ -57,7 +58,8 @@ export default function NavBar() {
             <button
               className="navBtn"
               style={{
-                backgroundColor: activeTwo ? "chartreuse" : "red",
+                backgroundColor: activeTwo ? "black" : "#e21313",
+                color: activeTwo ? "white" : "black"
               }}
             >
               Ulkolämpömittari
@@ -71,7 +73,8 @@ export default function NavBar() {
             <button
               className="navBtn"
               style={{
-                backgroundColor: activeThree ? "chartreuse" : "red",
+                backgroundColor: activeThree ? "black" : "#e21313",
+                color: activeThree ? "white" : "black"
               }}
             >
               Dashboard
