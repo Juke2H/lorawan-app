@@ -53,26 +53,39 @@ const DashBoard = ({ isOutside }) => {
     }
   };
 
+  function formatTimestamp(timestamp) {
+    const dateObj = new Date(timestamp);
+    const day = dateObj.getDate();
+    const month = dateObj.toLocaleString("default", { month: "long" });
+    const year = dateObj.getFullYear();
+    const hours = dateObj.getHours().toString().padStart(2, "0");
+    const minutes = dateObj.getMinutes().toString().padStart(2, "0");
+    const seconds = dateObj.getSeconds().toString().padStart(2, "0");
+
+    return `${day}. ${month} ${year} klo: ${hours}:${minutes}:${seconds}`;
+  }
+
   if (isLoading) {
     return <div>Loading...</div>;
   } else if (Object.values(node).length === 4) {
     return (
       <div>
-        <div className="textInfo">{Object.values(node)[0]}</div>
         <div className="nodes">
           <div className="nodeZero">
+            {formatTimestamp(Object.values(node)[0])}
+          </div>
+          <div className="nodeOne">
             Lämpötila <br />
             {Object.values(node)[1]}
           </div>
-          <div className="nodeOne">
+          <div className="nodeTwo">
             Kosteus <br />
             {Object.values(node)[2]}
           </div>
-          <div className="nodeTwo">
+          <div className="nodeThree">
             Vesivuoto <br />
             {Object.values(node)[3]}
           </div>
-          <div className="nodeThree"></div>
         </div>
         <div className="cldr">
           {isOutside ? (
