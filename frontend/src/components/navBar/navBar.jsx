@@ -61,20 +61,6 @@ export default function NavBar() {
               Ulkolämpömittari
             </button>
           </Link>
-          <Link
-            to="/dashBoard"
-            className="homeButtons"
-            onClick={menuThree}
-          >
-            <button
-              className="navBtn"
-              style={{
-                backgroundColor: activeThree ? "chartreuse" : "red",
-              }}
-            >
-              Dashboard
-            </button>
-          </Link>
         </div>
       </nav>
       <Outlet />
