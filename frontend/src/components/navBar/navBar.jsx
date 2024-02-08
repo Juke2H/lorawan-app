@@ -10,9 +10,7 @@ export default function NavBar() {
   const [activeThree, setActiveThree] = useState(false);
 
   useEffect(() => {
-    console.log(activeOne);
-    console.log(activeTwo);
-    console.log(activeThree);
+    console.log(activeOne, activeTwo, activeThree);
   }, [activeOne, activeTwo, activeThree]);
 
   //Functions for nav bar colors

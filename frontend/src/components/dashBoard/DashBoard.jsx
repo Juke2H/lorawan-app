@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import NodeInfo from "../NodeInfo/NodeInfo";
+import io from "socket.io-client";
 import "./DashBoard.css";
 
 const DashBoard = ({ isOutside }) => {
@@ -8,75 +9,49 @@ const DashBoard = ({ isOutside }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [node, setNode] = useState({});
 
-  const MINUTE_MS = 60000;
+  useEffect(() => {
+    fetchDataFromDatabase();
+  }, [isOutside]);
 
   useEffect(() => {
-    let ignore = false;
+    const socket = io("http://localhost:3000");
 
-    const FetchData = async () => {
-      setIsLoading(true);
+    socket.on("connect", () => {
+      console.log("SOCKET CONNECTION", socket.connected);
+    });
 
-      try {
-        const response = await axios.get(
-          "http://localhost:3000/getLatestInsideMeasurement"
-        );
+    socket.on("disconnect", () => {
+      console.log("SOCKET CONNECTION", socket.connected);
+    });
 
-        if (!ignore) {
-          setResponseBody(response.data);
-          const { id, device_id, ...newObj } = response.data[0];
-          console.log(newObj);
-          setNode(newObj);
-          console.log("Response Data:", JSON.stringify(response.data));
-        }
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    const interval = setInterval(() => {
-      console.log("Logs every minute");
-      FetchData();
-    }, MINUTE_MS);
-
-    return () => {
-      clearInterval(interval);
-      ignore = true;
-    };
+    socket.on("dataUpdated", fetchDataFromDatabase);
   }, []);
 
-  useEffect(() => {
-    let ignore = false;
+  const fetchDataFromDatabase = async () => {
+    setIsLoading(true);
+    try {
+      const endpoint = isOutside
+        ? "getLatestInsideMeasurement"
+        : "getLatestInsideMeasurement";
+      // const formattedDate = format(selected, "yyyy-MM-dd");
+      // const response = await fetch(
+      //   `http://localhost:3000/${endpoint}?date=${formattedDate}`
+      // );
+      const response = await fetch(`http://localhost:3000/${endpoint}`);
+      const result = await response.json();
+      console.log(response);
+      console.log(result);
 
-    const FetchData = async () => {
-      setIsLoading(true);
-
-      try {
-        const response = await axios.get(
-          "http://localhost:3000/getLatestInsideMeasurement"
-        );
-
-        if (!ignore) {
-          setResponseBody(response.data);
-          const { id, device_id, ...newObj } = response.data[0];
-          console.log(newObj);
-          setNode(newObj);
-          console.log("Response Data:", JSON.stringify(response.data));
-        }
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    FetchData();
-
-    return () => {
-      ignore = true;
-    };
-  }, []);
+      setResponseBody(result.data);
+      const { id, device_id, ...newObj } = result[0];
+      console.log(newObj);
+      setNode(newObj);
+    } catch (error) {
+      console.error("Error fetching data from database:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -100,7 +75,13 @@ const DashBoard = ({ isOutside }) => {
           <div className="nodeThree"></div>
         </div>
         <div className="cldr">
-          {isOutside ? <div><NodeInfo isOutside={true}/></div> : <NodeInfo isOutside={false} />}
+          {isOutside ? (
+            <div>
+              <NodeInfo isOutside={true} />
+            </div>
+          ) : (
+            <NodeInfo isOutside={false} />
+          )}
         </div>
       </div>
     );
