@@ -65,6 +65,15 @@ const DashBoard = ({ isOutside }) => {
     return `${day}. ${month} ${year} klo: ${hours}:${minutes}:${seconds}`;
   }
 
+  function waterLeak(isWaterLeaking) {
+    if (isWaterLeaking == 0) {
+      isWaterLeaking = "Ei";
+    } else {
+      isWaterLeaking = "Kyllä";
+    }
+    return isWaterLeaking;
+  }
+
   if (isLoading) {
     return <div>Loading...</div>;
   } else if (Object.values(node).length === 4) {
@@ -76,16 +85,23 @@ const DashBoard = ({ isOutside }) => {
           </div>
           <div className="nodeOne">
             Lämpötila <br />
-            {Object.values(node)[1]}
+            {Object.values(node)[1]} °C
           </div>
           <div className="nodeTwo">
             Kosteus <br />
-            {Object.values(node)[2]}
+            {Object.values(node)[2]} %
           </div>
+          {isOutside ? (
+            <div className="nodeThree">
+              Ilmanpaine <br />
+              {Object.values(node)[3]} mbar
+              </div>
+            ) : (
           <div className="nodeThree">
             Vesivuoto <br />
-            {Object.values(node)[3]}
+            {waterLeak(Object.values(node)[3])}
           </div>
+           )}
         </div>
         <div className="cldr">
           {isOutside ? (
