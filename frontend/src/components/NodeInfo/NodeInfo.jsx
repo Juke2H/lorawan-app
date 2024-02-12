@@ -116,6 +116,9 @@ export default function NodeInfo({ isOutside }) {
     return `${hours}:${minutes}`;
   }
 
+  ChartJS.defaults.font.size = 14;
+  ChartJS.defaults.font.weight = "bold";
+
   if (!selected || (data && data.length === 0))
     return (
       <div>
@@ -176,9 +179,6 @@ export default function NodeInfo({ isOutside }) {
               selected: 'my-selected',
               today: 'my-today',  
           }}
-          modifiersStyles={{
-            disabled: { fontSize: '75%' }
-          }}
           />
         </div>
       </div>
@@ -201,6 +201,7 @@ export default function NodeInfo({ isOutside }) {
               datasets: [
                 {
                   label: "Lämpötila",
+                  fontSize: 16,
                   data:
                     data &&
                     data.map((data) => ({
@@ -209,8 +210,6 @@ export default function NodeInfo({ isOutside }) {
                     })),
                   backgroundColor: "#e21313",
                   borderColor: "#e21313",
-                  
-                  
                 },
               ],
             }}
@@ -248,9 +247,6 @@ export default function NodeInfo({ isOutside }) {
             modifiersClassNames={{
               selected: 'my-selected',
               today: 'my-today',
-          }}
-          modifiersStyles={{
-            disabled: { fontSize: '75%' }
           }}
           />
         </div>
