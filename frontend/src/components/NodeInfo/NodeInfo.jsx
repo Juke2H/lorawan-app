@@ -119,13 +119,13 @@ export default function NodeInfo({ isOutside }) {
   if (!selected || (data && data.length === 0))
     return (
       <div>
-     <div className="cal">
-        <div className="chart">
-          <Line
-            data={{
-              labels:
-                data &&
-                data.map((data) => formatTimestampForChart(data.timestamp)),
+        <div className="cal">
+          <div className="chart">
+            <Line
+              data={{
+                labels:
+                  data &&
+                  data.map((data) => formatTimestampForChart(data.timestamp)),
                 // ["00:00", "02:00", "04:00", "06:00", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00", "24:00"],
               datasets: [
                 {
@@ -197,7 +197,7 @@ export default function NodeInfo({ isOutside }) {
               labels:
                 data &&
                 data.map((data) => formatTimestampForChart(data.timestamp)),
-                // ["00:00", "02:00", "04:00", "06:00", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00", "24:00"],
+              // ["00:00", "02:00", "04:00", "06:00", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00", "24:00"],
               datasets: [
                 {
                   label: "Lämpötila",
@@ -215,6 +215,36 @@ export default function NodeInfo({ isOutside }) {
               ],
             }}
             options={{
+              plugins: {
+                tooltip: {
+                  callbacks: {
+                    label: function (tooltipItems) {
+                      // console.log(tooltipItems);
+                      // console.log(data);
+                      // console.log(data[0]);
+                      // console.log(JSON.stringify(data[tooltipItems.dataIndex]));
+                      // let label = tooltipItems.dataset.label;
+
+                      // if (label) {
+                      //   label += ": ";
+                      // }
+                      // if (tooltipItems.parsed.y !== null) {
+                      //   label += tooltipItems.parsed.y + " °C";
+                      // }
+
+                      let label = [];
+                      let { id, device_id, timestamp, ...newObj } =
+                        data[tooltipItems.dataIndex];
+                      label = Object.keys(newObj).map(function (key) {
+                        console.log(key);
+                        return `${key}: ${newObj[key]}`;
+                      });
+                      console.log(label);
+                      return label;
+                    },
+                  },
+                },
+              },
               maintainAspectRatio: false,
               scales: {
                 y: {
@@ -223,8 +253,8 @@ export default function NodeInfo({ isOutside }) {
                     callback: function (value, index, values) {
                       // Poista desimaalit, jos ne ovat nolla
                       return value % 1 === 0
-                        ? value.toFixed(0)
-                        : value.toFixed(1);
+                        ? value.toFixed(0) + " °C"
+                        : value.toFixed(1) + " °C";
                     },
                   },
                 },
@@ -299,6 +329,15 @@ export default function NodeInfo({ isOutside }) {
           }}
         >
           {isDataVisible ? "Piilota datapisteet" : "Näytä datapisteet"}
+        </button>
+      </div>
+      <div>
+        <button
+          onClick={() => {
+            console.log(data);
+          }}
+        >
+          Click
         </button>
       </div>
       <div className="dataPointsContainer">
