@@ -60,10 +60,9 @@
 }
 
 .my-today { 
-  font-weight: bold;
-  font-size: 140%; 
-  color: #000000;
-  background-color: #080505;
+  font-weight: bold !important;
+  font-size: 140% !important;
+  /* border: 2px solid #030101 !important; */
 }
 
 .rdp {

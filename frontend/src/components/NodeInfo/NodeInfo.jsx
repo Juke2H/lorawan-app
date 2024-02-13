@@ -118,6 +118,7 @@ export default function NodeInfo({ isOutside }) {
 
   ChartJS.defaults.font.size = 14;
   ChartJS.defaults.font.weight = "bold";
+  ChartJS.defaults.color = "#030101";
 
   if (!selected || (data && data.length === 0))
     return (
