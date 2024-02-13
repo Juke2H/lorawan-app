@@ -126,62 +126,61 @@ export default function NodeInfo({ isOutside }) {
                 labels:
                   data &&
                   data.map((data) => formatTimestampForChart(data.timestamp)),
-                // ["00:00", "02:00", "04:00", "06:00", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00", "24:00"],
-              datasets: [
-                {
-                  label: "Lämpötila",
-                  data:
-                    data &&
-                    data.map((data) => ({
-                      x: formatTimestampForChart(data.timestamp),
-                      y: roundTemperature(data.temperature),
-                    })),
-                  backgroundColor: "#e21313",
-                  borderColor: "#e21313",
-                },
-              ],
-            }}
-            options={{
-              maintainAspectRatio: false,
-              scales: {
-                y: {
-                  ticks: {
-                    stepSize: 0.5,
-                    callback: function (value, index, values) {
-                      // Poista desimaalit, jos ne ovat nolla
-                      return value % 1 === 0
-                        ? value.toFixed(0)
-                        : value.toFixed(1);
+                datasets: [
+                  {
+                    label: "Lämpötila",
+                    data:
+                      data &&
+                      data.map((data) => ({
+                        x: formatTimestampForChart(data.timestamp),
+                        y: roundTemperature(data.temperature),
+                      })),
+                    backgroundColor: "#e21313",
+                    borderColor: "#e21313",
+                  },
+                ],
+              }}
+              options={{
+                maintainAspectRatio: false,
+                scales: {
+                  y: {
+                    ticks: {
+                      stepSize: 0.5,
+                      callback: function (value, index, values) {
+                        // Poista desimaalit, jos ne ovat nolla
+                        return value % 1 === 0
+                          ? value.toFixed(0)
+                          : value.toFixed(1);
+                      },
                     },
                   },
                 },
-              },
-            }}
-          />
+              }}
+            />
+          </div>
+          <div className="dayPicker">
+            <DayPicker
+              locale={fi}
+              ISOWeek
+              showOutsideDays
+              fixedWeeks
+              mode="single"
+              selected={selected}
+              month={selected}
+              onMonthChange={(month) => setSelected(month)}
+              onSelect={(date) => {
+                setSelected(date);
+              }}
+              modifiersClassNames={{
+                selected: "my-selected",
+                today: "my-today",
+              }}
+              modifiersStyles={{
+                disabled: { fontSize: "75%" },
+              }}
+            />
+          </div>
         </div>
-        <div className="dayPicker">
-          <DayPicker
-            locale={fi}
-            ISOWeek
-            showOutsideDays
-            fixedWeeks
-            mode="single"
-            selected={selected}
-            month={selected}
-            onMonthChange={(month) => setSelected(month)}
-            onSelect={(date) => {
-              setSelected(date);
-            }}
-            modifiersClassNames={{
-              selected: 'my-selected',
-              today: 'my-today',  
-          }}
-          modifiersStyles={{
-            disabled: { fontSize: '75%' }
-          }}
-          />
-        </div>
-      </div>
         <div className="NodeInfo">
           <h4>Ei tietoja</h4>
         </div>
@@ -197,7 +196,6 @@ export default function NodeInfo({ isOutside }) {
               labels:
                 data &&
                 data.map((data) => formatTimestampForChart(data.timestamp)),
-              // ["00:00", "02:00", "04:00", "06:00", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00", "24:00"],
               datasets: [
                 {
                   label: "Lämpötila",
@@ -209,8 +207,6 @@ export default function NodeInfo({ isOutside }) {
                     })),
                   backgroundColor: "#e21313",
                   borderColor: "#e21313",
-                  
-                  
                 },
               ],
             }}
@@ -219,28 +215,25 @@ export default function NodeInfo({ isOutside }) {
                 tooltip: {
                   callbacks: {
                     label: function (tooltipItems) {
-                      // console.log(tooltipItems);
-                      // console.log(data);
-                      // console.log(data[0]);
-                      // console.log(JSON.stringify(data[tooltipItems.dataIndex]));
-                      // let label = tooltipItems.dataset.label;
+                      let item = data[tooltipItems.dataIndex];
+                      let tooltipContent = [];
 
-                      // if (label) {
-                      //   label += ": ";
-                      // }
-                      // if (tooltipItems.parsed.y !== null) {
-                      //   label += tooltipItems.parsed.y + " °C";
-                      // }
+                      tooltipContent.push(
+                        `Lämpötila: ${roundTemperature(item.temperature)}°C`
+                      );
+                      tooltipContent.push(`Kosteus: ${item.humidity}%`);
 
-                      let label = [];
-                      let { id, device_id, timestamp, ...newObj } =
-                        data[tooltipItems.dataIndex];
-                      label = Object.keys(newObj).map(function (key) {
-                        console.log(key);
-                        return `${key}: ${newObj[key]}`;
-                      });
-                      console.log(label);
-                      return label;
+                      if (isOutside) {
+                        tooltipContent.push(
+                          `Ilmanpaine: ${item.pressure} mbar`
+                        );
+                      } else {
+                        tooltipContent.push(
+                          `Vesivahinko: ${waterLeak(item.waterleak)}`
+                        );
+                      }
+
+                      return tooltipContent.map((content) => [content]);
                     },
                   },
                 },
@@ -276,12 +269,12 @@ export default function NodeInfo({ isOutside }) {
               setSelected(date);
             }}
             modifiersClassNames={{
-              selected: 'my-selected',
-              today: 'my-today',
-          }}
-          modifiersStyles={{
-            disabled: { fontSize: '75%' }
-          }}
+              selected: "my-selected",
+              today: "my-today",
+            }}
+            modifiersStyles={{
+              disabled: { fontSize: "75%" },
+            }}
           />
         </div>
       </div>
@@ -325,7 +318,7 @@ export default function NodeInfo({ isOutside }) {
           onClick={() => toggleDataVisibility()}
           style={{
             backgroundColor: isDataVisible ? "black" : "#e21313",
-            color: isDataVisible ? "white" : "black"
+            color: isDataVisible ? "white" : "black",
           }}
         >
           {isDataVisible ? "Piilota datapisteet" : "Näytä datapisteet"}
