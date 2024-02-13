@@ -20,14 +20,16 @@
 }
 
 .dataPointsContainer {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 3500px;
 }
 
 .dataPoint {
   border: 1px solid #ddd;
   padding: 1px;
+  flex: 1 1 150px; /* Mukauta leveys tarpeen mukaan */
+  margin: 10px;
 }
 
 .NodeInfo {
@@ -61,7 +63,7 @@
 
 .my-today { 
   font-weight: bold !important;
-  font-size: 140% !important;
+  font-size: 130% !important;
   /* border: 2px solid #030101 !important; */
 }
 

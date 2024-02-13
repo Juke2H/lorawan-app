@@ -65,7 +65,7 @@ export default function NodeInfo({ isOutside }) {
     const minutes = dateObj.getMinutes().toString().padStart(2, "0");
     const seconds = dateObj.getSeconds().toString().padStart(2, "0");
 
-    return `${day}. ${month} ${year} klo: ${hours}:${minutes}:${seconds}`;
+    return <p>{day}. {month} {year} <br /> klo: {hours}:{minutes}:{seconds}</p>;
   }
 
   function waterLeak(isWaterLeaking) {
