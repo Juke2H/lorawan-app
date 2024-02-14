@@ -123,66 +123,68 @@ export default function NodeInfo({ isOutside }) {
   if (!selected || (data && data.length === 0))
     return (
       <div>
-     <div className="cal">
-        <div className="chart">
-          <Line
-            data={{
-              labels:
-                data &&
-                data.map((data) => formatTimestampForChart(data.timestamp)),
-                // ["00:00", "02:00", "04:00", "06:00", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00", "24:00"],
-              datasets: [
-                {
-                  label: "Lämpötila",
-                  data:
-                    data &&
-                    data.map((data) => ({
-                      x: formatTimestampForChart(data.timestamp),
-                      y: roundTemperature(data.temperature),
-                    })),
-                  backgroundColor: "#e21313",
-                  borderColor: "#e21313",
-                },
-              ],
-            }}
-            options={{
-              maintainAspectRatio: false,
-              scales: {
-                y: {
-                  ticks: {
-                    stepSize: 0.5,
-                    callback: function (value, index, values) {
-                      // Poista desimaalit, jos ne ovat nolla
-                      return value % 1 === 0
-                        ? value.toFixed(0)
-                        : value.toFixed(1);
+        <div className="cal">
+          <div className="chart">
+            <Line
+              data={{
+                labels:
+                  data &&
+                  data.map((data) => formatTimestampForChart(data.timestamp)),
+                datasets: [
+                  {
+                    label: "Lämpötila",
+                    data:
+                      data &&
+                      data.map((data) => ({
+                        x: formatTimestampForChart(data.timestamp),
+                        y: roundTemperature(data.temperature),
+                      })),
+                    backgroundColor: "#e21313",
+                    borderColor: "#e21313",
+                  },
+                ],
+              }}
+              options={{
+                maintainAspectRatio: false,
+                scales: {
+                  y: {
+                    ticks: {
+                      stepSize: 0.5,
+                      callback: function (value, index, values) {
+                        // Poista desimaalit, jos ne ovat nolla
+                        return value % 1 === 0
+                          ? value.toFixed(0)
+                          : value.toFixed(1);
+                      },
                     },
                   },
                 },
-              },
-            }}
-          />
+              }}
+            />
+          </div>
+          <div className="dayPicker">
+            <DayPicker
+              locale={fi}
+              ISOWeek
+              showOutsideDays
+              fixedWeeks
+              mode="single"
+              selected={selected}
+              month={selected}
+              onMonthChange={(month) => setSelected(month)}
+              onSelect={(date) => {
+                setSelected(date);
+              }}
+              modifiersClassNames={{
+                selected: "my-selected",
+                today: "my-today",
+              }}
+              modifiersStyles={{
+                disabled: { fontSize: "75%" },
+              }}
+            />
+          </div>
         </div>
-        <div className="dayPicker">
-          <DayPicker
-            locale={fi}
-            ISOWeek
-            showOutsideDays
-            fixedWeeks
-            mode="single"
-            selected={selected}
-            month={selected}
-            onMonthChange={(month) => setSelected(month)}
-            onSelect={(date) => {
-              setSelected(date);
-            }}
-            modifiersClassNames={{
-              selected: 'my-selected',
-              today: 'my-today',  
-          }}
-          />
-        </div>
-      </div>
         <div className="NodeInfo">
           <h4>Ei tietoja</h4>
         </div>
@@ -198,7 +200,6 @@ export default function NodeInfo({ isOutside }) {
               labels:
                 data &&
                 data.map((data) => formatTimestampForChart(data.timestamp)),
-                // ["00:00", "02:00", "04:00", "06:00", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00", "24:00"],
               datasets: [
                 {
                   label: "Lämpötila",
@@ -215,6 +216,33 @@ export default function NodeInfo({ isOutside }) {
               ],
             }}
             options={{
+              plugins: {
+                tooltip: {
+                  callbacks: {
+                    label: function (tooltipItems) {
+                      let item = data[tooltipItems.dataIndex];
+                      let tooltipContent = [];
+
+                      tooltipContent.push(
+                        `Lämpötila: ${roundTemperature(item.temperature)}°C`
+                      );
+                      tooltipContent.push(`Kosteus: ${item.humidity}%`);
+
+                      if (isOutside) {
+                        tooltipContent.push(
+                          `Ilmanpaine: ${item.pressure} mbar`
+                        );
+                      } else {
+                        tooltipContent.push(
+                          `Vesivahinko: ${waterLeak(item.waterleak)}`
+                        );
+                      }
+
+                      return tooltipContent.map((content) => [content]);
+                    },
+                  },
+                },
+              },
               maintainAspectRatio: false,
               scales: {
                 y: {
@@ -223,8 +251,8 @@ export default function NodeInfo({ isOutside }) {
                     callback: function (value, index, values) {
                       // Poista desimaalit, jos ne ovat nolla
                       return value % 1 === 0
-                        ? value.toFixed(0)
-                        : value.toFixed(1);
+                        ? value.toFixed(0) + " °C"
+                        : value.toFixed(1) + " °C";
                     },
                   },
                 },
@@ -246,9 +274,12 @@ export default function NodeInfo({ isOutside }) {
               setSelected(date);
             }}
             modifiersClassNames={{
-              selected: 'my-selected',
-              today: 'my-today',
-          }}
+              selected: "my-selected",
+              today: "my-today",
+            }}
+            modifiersStyles={{
+              disabled: { fontSize: "75%" },
+            }}
           />
         </div>
       </div>
@@ -292,10 +323,19 @@ export default function NodeInfo({ isOutside }) {
           onClick={() => toggleDataVisibility()}
           style={{
             backgroundColor: isDataVisible ? "black" : "#e21313",
-            color: isDataVisible ? "white" : "black"
+            color: isDataVisible ? "white" : "black",
           }}
         >
           {isDataVisible ? "Piilota datapisteet" : "Näytä datapisteet"}
+        </button>
+      </div>
+      <div>
+        <button
+          onClick={() => {
+            console.log(data);
+          }}
+        >
+          Click
         </button>
       </div>
       <div className="dataPointsContainer">
