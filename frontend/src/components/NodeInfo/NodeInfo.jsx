@@ -286,7 +286,7 @@ export default function NodeInfo({ isOutside }) {
           }}
         />
       </div> */}
-      <div className="NodeInfo">
+      {/* <div className="NodeInfo">
         <button
           className="dayPickerButtons"
           onClick={() => toggleDataVisibility()}
@@ -313,7 +313,7 @@ export default function NodeInfo({ isOutside }) {
               )}
             </div>
           ))}
-      </div>
+      </div> */}
     </div>
   );
 }
