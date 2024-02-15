@@ -1,50 +1,35 @@
-import React from "react";
-import { useState, useEffect } from "react";
-import { Outlet, Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Outlet, Link, useLocation } from "react-router-dom";
 import "./navBar.css";
 
 export default function NavBar() {
-  //States for nav bar colors
-  const [activeOne, setActiveOne] = useState(false);
-  const [activeTwo, setActiveTwo] = useState(false);
-  const [activeThree, setActiveThree] = useState(false);
+  const [activeButton, setActiveButton] = useState("none");
+  const location = useLocation();
 
   useEffect(() => {
-    console.log(activeOne);
-    console.log(activeTwo);
-    console.log(activeThree);
-  }, [activeOne, activeTwo, activeThree]);
+    if (location.pathname === "/NodeInfoInside") {
+      setActiveButton("inside");
+    } else if (location.pathname === "/NodeInfoOutside") {
+      setActiveButton("outside");
+    } else {
+      setActiveButton("none");
+    }
+  }, [location]);
 
-  //Functions for nav bar colors
-  const menuOne = () => {
-    setActiveOne(true);
-    setActiveTwo(false);
-    setActiveThree(false);
-  };
-
-  const menuTwo = () => {
-    setActiveOne(false);
-    setActiveTwo(true);
-    setActiveThree(false);
-  };
-
-  const menuThree = () => {
-    setActiveOne(false);
-    setActiveTwo(false);
-    setActiveThree(true);
-  };
-
-  //return
   return (
     <div className="margin">
       <nav>
         <div className="navbar">
-          <Link to="/NodeInfoInside" className="homeButtons" onClick={menuOne}>
+          <Link
+            to="/NodeInfoInside"
+            className="homeButtons"
+          >
             <button
               className="navBtn"
               style={{
-                backgroundColor: activeOne ? "black" : "#e21313",
-                color: activeOne ? "white" : "black"
+                backgroundColor:
+                  activeButton === "inside" ? "black" : "#e21313",
+                color: activeButton === "inside" ? "white" : "black",
               }}
             >
               Sisälämpömittari
@@ -53,13 +38,13 @@ export default function NavBar() {
           <Link
             to="/NodeInfoOutside"
             className="homeButtons"
-            onClick={menuTwo}
           >
             <button
               className="navBtn"
               style={{
-                backgroundColor: activeTwo ? "black" : "#e21313",
-                color: activeTwo ? "white" : "black"
+                backgroundColor:
+                  activeButton === "outside" ? "black" : "#e21313",
+                color: activeButton === "outside" ? "white" : "black",
               }}
             >
               Ulkolämpömittari

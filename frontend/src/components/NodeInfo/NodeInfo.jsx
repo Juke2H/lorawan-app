@@ -12,8 +12,8 @@ import io from "socket.io-client";
 export default function NodeInfo({ isOutside }) {
   const [selected, setSelected] = useState(new Date());
   const [data, setData] = useState(null);
-  const [isDataVisible, setDataVisibility] = useState(false);
   const navigate = useNavigate();
+  // const [isDataVisible, setDataVisibility] = useState(false);
 
   useEffect(() => {
     fetchDataFromDatabase();
@@ -23,11 +23,9 @@ export default function NodeInfo({ isOutside }) {
     const socket = io("http://localhost:3000");
 
     socket.on("connect", () => {
-      console.log("SOCKET CONNECTION", socket.connected);
     });
 
     socket.on("disconnect", () => {
-      console.log("SOCKET CONNECTION", socket.connected);
     });
 
     socket.on("dataUpdated", fetchDataFromDatabase);
@@ -52,21 +50,21 @@ export default function NodeInfo({ isOutside }) {
     }
   };
 
-  function toggleDataVisibility() {
-    setDataVisibility(!isDataVisible);
-  }
+  // function toggleDataVisibility() {
+  //   setDataVisibility(!isDataVisible);
+  // }
 
-  function formatTimestamp(timestamp) {
-    const dateObj = new Date(timestamp);
-    const day = dateObj.getDate();
-    const month = dateObj.toLocaleString("default", { month: "long" });
-    const year = dateObj.getFullYear();
-    const hours = dateObj.getHours().toString().padStart(2, "0");
-    const minutes = dateObj.getMinutes().toString().padStart(2, "0");
-    const seconds = dateObj.getSeconds().toString().padStart(2, "0");
+  // function formatTimestamp(timestamp) {
+  //   const dateObj = new Date(timestamp);
+  //   const day = dateObj.getDate();
+  //   const month = dateObj.toLocaleString("default", { month: "long" });
+  //   const year = dateObj.getFullYear();
+  //   const hours = dateObj.getHours().toString().padStart(2, "0");
+  //   const minutes = dateObj.getMinutes().toString().padStart(2, "0");
+  //   const seconds = dateObj.getSeconds().toString().padStart(2, "0");
 
-    return <p>{day}. {month} {year} <br /> klo: {hours}:{minutes}:{seconds}</p>;
-  }
+  //   return <p>{day}. {month} {year} <br /> klo: {hours}:{minutes}:{seconds}</p>;
+  // }
 
   function waterLeak(isWaterLeaking) {
     if (isWaterLeaking == 0) {
@@ -234,7 +232,7 @@ export default function NodeInfo({ isOutside }) {
                         );
                       } else {
                         tooltipContent.push(
-                          `Vesivahinko: ${waterLeak(item.waterleak)}`
+                          `Vesivuoto: ${waterLeak(item.waterleak)}`
                         );
                       }
 
