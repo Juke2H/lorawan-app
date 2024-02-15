@@ -1,10 +1,10 @@
-const express = require('express');
-const http = require('http');
-const socketIo = require('socket.io');
-const cors = require('cors');
-const mqtt = require('mqtt');
-require('dotenv').config();
-const { Pool } = require('pg');
+const express = require("express");
+const http = require("http");
+const socketIo = require("socket.io");
+const cors = require("cors");
+const mqtt = require("mqtt");
+require("dotenv").config();
+const { Pool } = require("pg");
 
 // PostgreSQL connection pool
 // Fill in
@@ -14,14 +14,14 @@ const pool = new Pool({
   database: process.env.POSTGRES_DB,
   password: process.env.POSTGRES_PASSWORD,
   port: process.env.POSTGRES_PORT,
-})
+});
 
 const app = express();
 const server = http.createServer(app);
 
 const corsOptions = {
-  origin: 'http://localhost:8000',
-  methods: 'GET',
+  origin: "http://localhost:8000",
+  methods: "GET",
   credentials: true,
   optionsSuccessStatus: 204,
 };
@@ -59,24 +59,30 @@ mqttClient.on("message", (topic, message) => {
   // Assuming the message is in JSON format
   const data = JSON.parse(message.toString());
   console.log(data);
-  io.emit('dataUpdated');
+  io.emit("dataUpdated");
 
   // Insert data into PostgreSQL database
   // Fill in
   let importantData;
-  
+
   if (data.deviceInfo.deviceProfileName == "Ulkolämpömittari") {
-    importantData = { 
-      "devEui" : data.deviceInfo.devEui,
-      "time" : data.rxInfo[0].nsTime, 
-      "temperature" : data.object.temperature,
-      "humidity" : data.object.humidity, 
-      "pressure" : data.object.pressure
+    importantData = {
+      devEui: data.deviceInfo.devEui,
+      time: data.rxInfo[0].nsTime,
+      temperature: data.object.temperature,
+      humidity: data.object.humidity,
+      pressure: data.object.pressure,
     };
 
     pool.query(
       "INSERT INTO measurements (device_id, timestamp, temperature, humidity, pressure) VALUES ($1, $2, $3, $4, $5)",
-      [data.deviceInfo.devEui, data.rxInfo[0].nsTime, data.object.temperature, data.object.humidity, data.object.pressure],
+      [
+        data.deviceInfo.devEui,
+        data.rxInfo[0].nsTime,
+        data.object.temperature,
+        data.object.humidity,
+        data.object.pressure,
+      ],
       (err) => {
         if (err) {
           console.error("Error inserting data into the database", err);
@@ -86,17 +92,23 @@ mqttClient.on("message", (topic, message) => {
       }
     );
   } else if (data.deviceInfo.deviceProfileName == "Sisälämpömittari") {
-    importantData = { 
-      "devEui" : data.deviceInfo.devEui,
-      "time" : data.rxInfo[0].nsTime,
-      "temperature" : data.object.temperature,
-      "humidity" : data.object.humidity, 
-      "waterleak" : data.object.waterleak
+    importantData = {
+      devEui: data.deviceInfo.devEui,
+      time: data.rxInfo[0].nsTime,
+      temperature: data.object.temperature,
+      humidity: data.object.humidity,
+      waterleak: data.object.waterleak,
     };
 
     pool.query(
       "INSERT INTO measurements2 (device_id, timestamp, temperature, humidity, waterleak) VALUES ($1, $2, $3, $4, $5)",
-      [data.deviceInfo.devEui, data.rxInfo[0].nsTime, data.object.temperature, data.object.humidity, data.object.waterleak],
+      [
+        data.deviceInfo.devEui,
+        data.rxInfo[0].nsTime,
+        data.object.temperature,
+        data.object.humidity,
+        data.object.waterleak,
+      ],
       (err) => {
         if (err) {
           console.error("Error inserting data into the database", err);
@@ -105,110 +117,128 @@ mqttClient.on("message", (topic, message) => {
         }
       }
     );
-  };
+  }
 });
 
 // Get Queries
 
 const getOutsideMeasurementsByID = (request, response) => {
-  const getQuery = 'SELECT * FROM measurements ORDER BY device_id ASC LIMIT 1'
+  const getQuery = "SELECT * FROM measurements ORDER BY device_id ASC LIMIT 1";
   pool.query(getQuery, (error, results) => {
     if (error) {
-      throw error
+      throw error;
     }
-    response.status(200).json(results.rows)
-  })
-}
+    response.status(200).json(results.rows);
+  });
+};
 
 const getInsideMeasurementsByID = (request, response) => {
-  const getQuery = 'SELECT * FROM measurements2 ORDER BY device_id ASC LIMIT 1'
+  const getQuery = "SELECT * FROM measurements2 ORDER BY device_id ASC LIMIT 1";
   pool.query(getQuery, (error, results) => {
     if (error) {
-      throw error
+      throw error;
     }
-    response.status(200).json(results.rows)
-  })
-}
+    response.status(200).json(results.rows);
+  });
+};
 
 const getOutsideMeasurementsByTime = (request, response) => {
-  const getQuery = 'SELECT * FROM measurements ORDER BY timestamp DESC LIMIT 5'
+  const getQuery = "SELECT * FROM measurements ORDER BY timestamp DESC LIMIT 5";
   pool.query(getQuery, (error, results) => {
     if (error) {
-      throw error
+      throw error;
     }
-    response.status(200).json(results.rows)
-  })
-}
+    response.status(200).json(results.rows);
+  });
+};
 
 const getInsideMeasurementsByTime = (request, response) => {
-  const getQuery = 'SELECT * FROM measurements2 ORDER BY timestamp DESC LIMIT 5'
+  const getQuery =
+    "SELECT * FROM measurements2 ORDER BY timestamp DESC LIMIT 5";
   pool.query(getQuery, (error, results) => {
     if (error) {
-      throw error
+      throw error;
     }
-    response.status(200).json(results.rows)
-  })
-}
+    response.status(200).json(results.rows);
+  });
+};
 
 const getLatestInsideMeasurement = (request, response) => {
-  const getQuery = 'SELECT * FROM measurements2 ORDER BY id DESC LIMIT 1'
+  const getQuery = "SELECT * FROM measurements2 ORDER BY id DESC LIMIT 1";
   pool.query(getQuery, (error, results) => {
     if (error) {
-      throw error
+      throw error;
     }
-    response.status(200).json(results.rows)
-  })
-}
+    response.status(200).json(results.rows);
+  });
+};
 
-app.get('/byDateInside', async (req, res) => {
+const getLatestOutsideMeasurement = (request, response) => {
+  const getQuery = "SELECT * FROM measurements ORDER BY id DESC LIMIT 1";
+  pool.query(getQuery, (error, results) => {
+    if (error) {
+      throw error;
+    }
+    response.status(200).json(results.rows);
+  });
+};
+
+app.get("/byDateInside", async (req, res) => {
   const requestedDate = req.query.date;
 
   if (!requestedDate) {
-    return res.status(400).json({ error: 'Date parameter is missing' });
+    return res.status(400).json({ error: "Date parameter is missing" });
   }
 
   try {
     const result = await pool.query(
-      'SELECT * FROM measurements2 WHERE CAST(timestamp AT TIME ZONE \'UTC\' AT TIME ZONE \'Europe/Helsinki\' AS DATE) = $1',
+      "SELECT * FROM measurements2 WHERE CAST(timestamp AT TIME ZONE 'UTC' AT TIME ZONE 'Europe/Helsinki' AS DATE) = $1",
       [requestedDate]
     );
     res.json(result.rows);
   } catch (error) {
-    console.error('Error executing database query:', error);
-    res.status(500).json({ error: 'Internal server error', details: error.message });
+    console.error("Error executing database query:", error);
+    res
+      .status(500)
+      .json({ error: "Internal server error", details: error.message });
   }
 });
 
-app.get('/byDateOutside', async (req, res) => {
+app.get("/byDateOutside", async (req, res) => {
   const requestedDate = req.query.date;
 
   if (!requestedDate) {
-    return res.status(400).json({ error: 'Date parameter is missing' });
+    return res.status(400).json({ error: "Date parameter is missing" });
   }
 
   try {
     const result = await pool.query(
-      'SELECT * FROM measurements WHERE CAST(timestamp AT TIME ZONE \'UTC\' AT TIME ZONE \'Europe/Helsinki\' AS DATE) = $1',
+      "SELECT * FROM measurements WHERE CAST(timestamp AT TIME ZONE 'UTC' AT TIME ZONE 'Europe/Helsinki' AS DATE) = $1",
       [requestedDate]
     );
     res.json(result.rows);
   } catch (error) {
-    console.error('Error executing database query:', error);
-    res.status(500).json({ error: 'Internal server error', details: error.message });
+    console.error("Error executing database query:", error);
+    res
+      .status(500)
+      .json({ error: "Internal server error", details: error.message });
   }
 });
 
 const port = process.env.PORT || 3000;
 server.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
-  console.log(`Socket.IO server is running on http://localhost:${socketIoPort}`);
+  console.log(
+    `Socket.IO server is running on http://localhost:${socketIoPort}`
+  );
 });
 
-app.get('/', (request, response) => {
-  response.json({ info: 'Hello' })
-})
-app.get('/getOutsideMeasurementsByID', getOutsideMeasurementsByID)
-app.get('/getInsideMeasurementsByID', getInsideMeasurementsByID)
-app.get('/getOutsideMeasurementsByTime', getOutsideMeasurementsByTime)
-app.get('/getInsideMeasurementsByTime', getInsideMeasurementsByTime)
-app.get('/getLatestInsideMeasurement', getLatestInsideMeasurement)
+app.get("/", (request, response) => {
+  response.json({ info: "Hello" });
+});
+app.get("/getOutsideMeasurementsByID", getOutsideMeasurementsByID);
+app.get("/getInsideMeasurementsByID", getInsideMeasurementsByID);
+app.get("/getOutsideMeasurementsByTime", getOutsideMeasurementsByTime);
+app.get("/getInsideMeasurementsByTime", getInsideMeasurementsByTime);
+app.get("/getLatestInsideMeasurement", getLatestInsideMeasurement);
+app.get("/getLatestOutsideMeasurement", getLatestOutsideMeasurement);
