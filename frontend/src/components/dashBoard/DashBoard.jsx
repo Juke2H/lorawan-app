@@ -28,7 +28,7 @@ const DashBoard = ({ isOutside }) => {
     setIsLoading(true);
     try {
       const endpoint = isOutside
-        ? "getLatestInsideMeasurement"
+        ? "getLatestOutsideMeasurement"
         : "getLatestInsideMeasurement";
       // const formattedDate = format(selected, "yyyy-MM-dd");
       // const response = await fetch(
