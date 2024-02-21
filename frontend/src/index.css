@@ -5,7 +5,7 @@
   text-align: center;
 
    color-scheme: light dark;
-   color: rgba(255, 255, 255, 0.87);
+   color: rgba(181, 77, 77, 0.87);
    background-color: #242424; 
 
   font-synthesis: none;
@@ -14,13 +14,13 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
- body {
+ /* body {
   overflow-y: scroll;
-}
+} */
 
  button {
   border-radius: 8px;
-  border: none;
+  border: 1px black;
   padding: 10px 32px;
   font-size: 1em;
   font-weight: 500;
@@ -33,16 +33,7 @@
 
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
+    color: #000000;
     background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-  .chart canvas {
-    max-width: 700px;
   }
 }

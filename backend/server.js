@@ -58,7 +58,7 @@ mqttClient.on("connect", () => {
 mqttClient.on("message", (topic, message) => {
   // Assuming the message is in JSON format
   const data = JSON.parse(message.toString());
-  console.log(data);
+  // console.log(data);
   io.emit("dataUpdated");
 
   // Insert data into PostgreSQL database
@@ -183,7 +183,7 @@ const getLatestOutsideMeasurement = (request, response) => {
   });
 };
 
-app.get("/byDateInside", async (req, res) => {
+ const byDateInside = async (req, res) => {
   const requestedDate = req.query.date;
 
   if (!requestedDate) {
@@ -202,9 +202,9 @@ app.get("/byDateInside", async (req, res) => {
       .status(500)
       .json({ error: "Internal server error", details: error.message });
   }
-});
+};
 
-app.get("/byDateOutside", async (req, res) => {
+ const byDateOutside = async (req, res) => {
   const requestedDate = req.query.date;
 
   if (!requestedDate) {
@@ -223,14 +223,12 @@ app.get("/byDateOutside", async (req, res) => {
       .status(500)
       .json({ error: "Internal server error", details: error.message });
   }
-});
+};
 
 const port = process.env.PORT || 3000;
 server.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
-  console.log(
-    `Socket.IO server is running on http://localhost:${socketIoPort}`
-  );
+  console.log(`Socket.IO server is running on http://localhost:${socketIoPort}`);
 });
 
 app.get("/", (request, response) => {
@@ -242,3 +240,5 @@ app.get("/getOutsideMeasurementsByTime", getOutsideMeasurementsByTime);
 app.get("/getInsideMeasurementsByTime", getInsideMeasurementsByTime);
 app.get("/getLatestInsideMeasurement", getLatestInsideMeasurement);
 app.get("/getLatestOutsideMeasurement", getLatestOutsideMeasurement);
+app.get("/byDateInside", byDateInside);
+app.get("/byDateOutside", byDateOutside);

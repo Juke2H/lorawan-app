@@ -1,6 +1,6 @@
 import "./NodeInfo.css";
 import { useState, useEffect } from "react";
-import { format } from "date-fns";
+import { format, isToday } from "date-fns";
 import { fi } from "date-fns/locale";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
@@ -12,24 +12,21 @@ import io from "socket.io-client";
 export default function NodeInfo({ isOutside }) {
   const [selected, setSelected] = useState(new Date());
   const [data, setData] = useState(null);
-  const navigate = useNavigate();
   // const [isDataVisible, setDataVisibility] = useState(false);
 
   useEffect(() => {
     fetchDataFromDatabase();
-  }, [selected, isOutside]);
+  }, [selected]);
 
   useEffect(() => {
-    const socket = io("http://localhost:3000");
-
-    socket.on("connect", () => {
-    });
-
-    socket.on("disconnect", () => {
-    });
-
-    socket.on("dataUpdated", fetchDataFromDatabase);
-  }, []);
+    if (isToday(selected)) {
+      const socket = io("http://localhost:3000");
+      socket.on("dataUpdated", fetchDataFromDatabase);
+      return () => {
+        socket.disconnect();
+      };
+    }
+  }, [selected]);
 
   const fetchDataFromDatabase = async () => {
     try {
