@@ -8,6 +8,8 @@ import { useNavigate } from "react-router-dom";
 import { Line } from "react-chartjs-2";
 import { Chart as ChartJS } from "chart.js/auto";
 import io from "socket.io-client";
+import moment from 'moment';
+import 'chartjs-adapter-moment';
 
 export default function NodeInfo({ isOutside }) {
   const [selected, setSelected] = useState(new Date());
@@ -94,7 +96,7 @@ export default function NodeInfo({ isOutside }) {
     const roundedTemperature = (
       Math.round(parseFloat(temperature) * 2) / 2
     ).toFixed(1);
-    const strippedTemperature = parseFloat(roundedTemperature); // Poista ylimääräiset desimaalit
+    const strippedTemperature = parseFloat(roundedTemperature);
 
     if (isNaN(strippedTemperature)) {
       return 0;
@@ -115,6 +117,15 @@ export default function NodeInfo({ isOutside }) {
   ChartJS.defaults.font.weight = "bold";
   ChartJS.defaults.color = "#030101";
 
+  const labels = Array.from({ length: 24 }, (_, i) => moment().startOf('day').add(i, 'hours').format('HH:mm'));
+
+  const fixedTimeLabels = [
+    "00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00",
+    "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00",
+    "20:00", "21:00", "22:00", "23:00", "24:00"
+  ];
+
+
   if (!selected || (data && data.length === 0))
     return (
       <div>
@@ -122,26 +133,74 @@ export default function NodeInfo({ isOutside }) {
           <div className="chart">
             <Line
               data={{
-                labels:
-                  data &&
-                  data.map((data) => formatTimestampForChart(data.timestamp)),
+                labels: fixedTimeLabels,
                 datasets: [
                   {
                     label: "Lämpötila",
-                    data:
-                      data &&
-                      data.map((data) => ({
-                        x: formatTimestampForChart(data.timestamp),
-                        y: roundTemperature(data.temperature),
-                      })),
+                    data: data.map(data => ({
+                      x: formatTimestampForChart(data.timestamp),
+                      y: roundTemperature(data.temperature),
+                    })),
                     backgroundColor: "#e21313",
                     borderColor: "#e21313",
                   },
                 ],
               }}
               options={{
+                plugins: {
+                  tooltip: {
+                    callbacks: {
+                      label: function (tooltipItems) {
+                        const timestamp = tooltipItems.parsed.x;
+                        const formattedTimestamp = moment(timestamp).format('HH:mm');
+
+                        let item = data[tooltipItems.dataIndex];
+                        let tooltipContent = [];
+
+                        tooltipContent.push(`Aika: ${formattedTimestamp}`);
+
+                        tooltipContent.push(
+                          `Lämpötila: ${roundTemperature(item.temperature)}°C`
+                        );
+                        tooltipContent.push(`Kosteus: ${item.humidity}%`);
+
+                        if (isOutside) {
+                          tooltipContent.push(
+                            `Ilmanpaine: ${item.pressure} mbar`
+                          );
+                        } else {
+                          tooltipContent.push(
+                            `Vesivuoto: ${waterLeak(item.waterleak)}`
+                          );
+                        }
+
+                        return tooltipContent;
+                      },
+                    },
+                  },
+                },
                 maintainAspectRatio: false,
                 scales: {
+                  x: {
+                    type: 'time',
+                    time: {
+                      parser: 'HH:mm',
+                      unit: 'hour',
+                      stepSize: 1,
+                      displayFormats: {
+                        hour: 'HH:mm'
+                      }
+                    },
+                    ticks: {
+                      source: 'labels',
+                      stepSize: 1,
+                      min: moment().startOf('day').subtract(1, 'hour'),
+                      max: moment().endOf('day').add(1, 'hour'),
+                      callback: function (value, index, values) {
+                        return labels[index % labels.length];
+                      }
+                    }
+                  },
                   y: {
                     ticks: {
                       stepSize: 0.5,
@@ -192,19 +251,14 @@ export default function NodeInfo({ isOutside }) {
         <div className="chart">
           <Line
             data={{
-              labels:
-                data &&
-                data.map((data) => formatTimestampForChart(data.timestamp)),
+              labels: fixedTimeLabels,
               datasets: [
                 {
                   label: "Lämpötila",
-                  fontSize: 16,
-                  data:
-                    data &&
-                    data.map((data) => ({
-                      x: formatTimestampForChart(data.timestamp),
-                      y: roundTemperature(data.temperature),
-                    })),
+                  data: data && data.map(data => ({
+                    x: formatTimestampForChart(data.timestamp),
+                    y: roundTemperature(data.temperature),
+                  })),
                   backgroundColor: "#e21313",
                   borderColor: "#e21313",
                 },
@@ -215,8 +269,13 @@ export default function NodeInfo({ isOutside }) {
                 tooltip: {
                   callbacks: {
                     label: function (tooltipItems) {
+                      const timestamp = tooltipItems.parsed.x;
+                      const formattedTimestamp = moment(timestamp).format('HH:mm');
+
                       let item = data[tooltipItems.dataIndex];
                       let tooltipContent = [];
+
+                      tooltipContent.push(`Aika: ${formattedTimestamp}`);
 
                       tooltipContent.push(
                         `Lämpötila: ${roundTemperature(item.temperature)}°C`
@@ -233,27 +292,40 @@ export default function NodeInfo({ isOutside }) {
                         );
                       }
 
-                      return tooltipContent.map((content) => [content]);
+                      return tooltipContent;
                     },
                   },
                 },
               },
               maintainAspectRatio: false,
               scales: {
+                x: {
+                  type: 'time',
+                  time: {
+                    parser: 'HH:mm',
+                    unit: 'hour',
+                    displayFormats: {
+                      hour: 'HH:mm'
+                    },
+                    min: moment().startOf('day'),
+                    max: moment().endOf('day')
+                  }
+                },
                 y: {
                   ticks: {
                     stepSize: 0.5,
                     callback: function (value, index, values) {
                       // Poista desimaalit, jos ne ovat nolla
                       return value % 1 === 0
-                        ? value.toFixed(0) + " °C"
-                        : value.toFixed(1) + " °C";
+                        ? value.toFixed(0)
+                        : value.toFixed(1);
                     },
                   },
                 },
               },
             }}
           />
+
         </div>
         <div className="dayPicker">
           <DayPicker
