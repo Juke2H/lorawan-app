@@ -51,7 +51,8 @@ pool.query("SELECT NOW()", (err, res) => {
 // Handle MQTT messages
 // Fill in
 mqttClient.on("connect", () => {
-  mqttClient.subscribe(process.env.MQTT_TOPIC); // Replace with your MQTT topic
+  mqttClient.subscribe(process.env.MQTT_TOPIC);
+  mqttClient.subscribe(process.env.MQTT_TOPIC_PC); // Replace with your MQTT topic
   console.log("Connected to MQTT broker");
 });
 
@@ -65,7 +66,35 @@ mqttClient.on("message", (topic, message) => {
   // Fill in
   let importantData;
 
-  if (data.deviceInfo.deviceProfileName == "Ulkolämpömittari") {
+  if (data.deviceInfo.deviceProfileName == "IMBuildings People Counter") {
+    importantData = {
+      devEui: data.deviceInfo.devEui,
+      time: data.rxInfo[0].nsTime,
+      counter_a: data.object.counter_a,
+      counter_b: data.object.counter_b,
+      total_counter_a: data.object.total_counter_a,
+      total_counter_b: data.object.total_counter_b
+    };
+
+    pool.query(
+      "INSERT INTO measurements3 (device_id, timestamp, counter_a, counter_b, total_counter_a, total_counter_b) VALUES ($1, $2, $3, $4, $5, $6)",
+      [
+        data.deviceInfo.devEui,
+        data.rxInfo[0].nsTime,
+        data.object.counter_a,
+        data.object.counter_b,
+        data.object.total_counter_a,
+        data.object.total_counter_b
+      ],
+      (err) => {
+        if (err) {
+          console.error("Error inserting data into the database", err);
+        } else {
+          console.log("Data inserted into PostgreSQL database:", importantData);
+        }
+      }
+    );
+  } else if (data.deviceInfo.deviceProfileName == "Ulkolämpömittari") {
     importantData = {
       devEui: data.deviceInfo.devEui,
       time: data.rxInfo[0].nsTime,
@@ -225,6 +254,27 @@ const getLatestOutsideMeasurement = (request, response) => {
   }
 };
 
+const byDatePC = async (req, res) => {
+  const requestedDate = req.query.date;
+
+  if (!requestedDate) {
+    return res.status(400).json({ error: "Date parameter is missing" });
+  }
+
+  try {
+    const result = await pool.query(
+      "SELECT * FROM measurements3 WHERE CAST(timestamp AT TIME ZONE 'UTC' AT TIME ZONE 'Europe/Helsinki' AS DATE) = $1",
+      [requestedDate]
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error executing database query:", error);
+    res
+      .status(500)
+      .json({ error: "Internal server error", details: error.message });
+  }
+};
+
 const port = process.env.PORT || 3000;
 server.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
@@ -242,3 +292,4 @@ app.get("/getLatestInsideMeasurement", getLatestInsideMeasurement);
 app.get("/getLatestOutsideMeasurement", getLatestOutsideMeasurement);
 app.get("/byDateInside", byDateInside);
 app.get("/byDateOutside", byDateOutside);
+app.get("/byDatePC", byDatePC);
