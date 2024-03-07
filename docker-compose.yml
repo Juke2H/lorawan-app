@@ -1,24 +1,36 @@
 version: '3.8'
 
+# Defines named volumes for data persistence.
 volumes: 
   dbvolume:
 
+# Defines services to be run.
 services:
+  # Service for PostgreSQL database.
   db:
+    # Specifies the name of the container.
     container_name: postgres_riveria
+    # Specifies the Docker image to be used for the container.
     image: postgres:16.1
+    # Specifies port mapping from host to container.
     ports: 
       - 5435:5432
+    # Specifies restart policy for the container.
     restart: always
+    # Specifies environment variables to be loaded from a file.
     env_file:
       - ./backend/.env
+    # Specifies volumes to be mounted to this service.
     volumes:
         - ./db/init:/docker-entrypoint-initdb.d
         - dbvolume:/var/lib/postgresql/data
   
+  # Service for the backend application.
   appservnodedocker:
     container_name: appserv_riveria
+    # Specifies the build context for the container.
     build: backend
+    # Specifies dependencies on other services.
     depends_on:
       - db
     env_file:
@@ -29,7 +41,8 @@ services:
       - 3000:3000
     volumes: 
         - ./backend/server.js:/usr/src/server/server.js
-        
+  
+  # Service for Mosquitto MQTT broker.
   mosquitto:
     container_name: local_mosquitto
     image: eclipse-mosquitto
@@ -40,12 +53,15 @@ services:
     volumes:
       - ./mqtt/mosquitto.conf:/mosquitto/config/mosquitto.conf
 
+  # Service for Vite frontend development server.
   vite_docker:
     container_name: vite_riveria
     build: frontend
     ports:
       - 8000:8000
+    # Specifies the working directory inside the container.
     working_dir: /usr/src/server
+    # Specifies volumes to be mounted. Same function, different syntax.
     volumes:
       - type: bind
         source: ./frontend/src
