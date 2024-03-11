@@ -5,7 +5,7 @@ import { fi } from "date-fns/locale";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import { useNavigate } from "react-router-dom";
-import { Line } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS } from "chart.js/auto";
 import io from "socket.io-client";
 import moment from 'moment';
@@ -14,7 +14,6 @@ import 'chartjs-adapter-moment';
 export default function PeopleCounter() {
   const [selected, setSelected] = useState(new Date());
   const [data, setData] = useState(null);
-  // const [isDataVisible, setDataVisibility] = useState(false);
 
   useEffect(() => {
     fetchDataFromDatabase();
@@ -71,6 +70,16 @@ export default function PeopleCounter() {
     return `${hours}:${minutes}`;
   }
 
+  function calculateTotalCounterAForDay(data) {
+    let totalCounterA = 0;
+
+    data && data.forEach(item => {
+      totalCounterA += parseInt(item.counter_a);
+    });
+
+    return totalCounterA;
+  }
+
   ChartJS.defaults.font.size = 14;
   ChartJS.defaults.font.weight = "bold";
   ChartJS.defaults.color = "#030101";
@@ -89,7 +98,7 @@ export default function PeopleCounter() {
       <div>
         <div className="cal">
           <div className="chart">
-            <Line
+            <Bar
               data={{
                 labels: fixedTimeLabels,
                 datasets: [
@@ -120,8 +129,12 @@ export default function PeopleCounter() {
                         tooltipContent.push(`Kävijöitä ulos: ${item.counter_b}`);
                         tooltipContent.push(`Kaikki sisäänpäin: ${item.total_counter_a}`);
                         tooltipContent.push(`Kaikki ulospäin: ${item.total_counter_b}`);
-                        
+
                         return tooltipContent;
+                      },
+                      title: function(tooltipItems) {
+                        // Voit palauttaa haluamasi otsikon tässä
+                        return 'Otsikko';
                       },
                     },
                   },
@@ -149,8 +162,13 @@ export default function PeopleCounter() {
                     }
                   },
                   y: {
+                    suggestedMin: 0,
+                    suggestedMax: 100,
                     ticks: {
-                      stepSize: 0.5,
+                      stepSize: 10,
+                      callback: function (value, index, values) {
+                        return value;
+                      }
                     },
                   },
                 },
@@ -181,7 +199,7 @@ export default function PeopleCounter() {
           </div>
         </div>
         <div className="NodeInfo">
-          <h4>TÄHÄN VOIS JOTAIN TULLA</h4>
+          <h4>Ei kävijöitä</h4>
         </div>
       </div>
     );
@@ -190,73 +208,78 @@ export default function PeopleCounter() {
     <div>
       <div className="cal">
         <div className="chart">
-        <Line
-              data={{
-                labels: fixedTimeLabels,
-                datasets: [
-                  {
-                    label: "Kävijöitä",
-                    data: data && data.map(data => ({
-                      x: formatTimestampForChart(data.timestamp),
-                      y: data.counter_a,
-                    })),
-                    backgroundColor: "#e21313",
-                    borderColor: "#e21313",
-                  },
-                ],
-              }}
-              options={{
-                plugins: {
-                  tooltip: {
-                    callbacks: {
-                      label: function (tooltipItems) {
-                        const timestamp = tooltipItems.parsed.x;
-                        const formattedTimestamp = moment(timestamp).format('HH:mm');
+          <Bar
+            data={{
+              labels: fixedTimeLabels,
+              datasets: [
+                {
+                  label: "Kävijöitä",
+                  data: data && data.map(data => ({
+                    x: formatTimestampForChart(data.timestamp),
+                    y: data.counter_a,
+                  })),
+                  backgroundColor: "#e21313",
+                  borderColor: "#e21313",
+                },
+              ],
+            }}
+            options={{
+              plugins: {
+                tooltip: {
+                  callbacks: {
+                    label: function (tooltipItems) {
+                      const timestamp = tooltipItems.parsed.x;
+                      const formattedTimestamp = moment(timestamp).format('HH:mm');
 
-                        let item = data[tooltipItems.dataIndex];
-                        let tooltipContent = [];
+                      let item = data[tooltipItems.dataIndex];
+                      let tooltipContent = [];
 
-                        tooltipContent.push(`Aika: ${formattedTimestamp}`);
-                        tooltipContent.push(`Kävijöitä sisälle: ${item.counter_a}`);
-                        tooltipContent.push(`Kävijöitä ulos: ${item.counter_b}`);
-                        tooltipContent.push(`Kaikki sisäänpäin: ${item.total_counter_a}`);
-                        tooltipContent.push(`Kaikki ulospäin: ${item.total_counter_b}`);
-                        
-                        return tooltipContent;
-                      },
+                      tooltipContent.push(`Aika: ${formattedTimestamp}`);
+                      tooltipContent.push(`Kävijöitä sisälle: ${item.counter_a}`);
+                      tooltipContent.push(`Kävijöitä ulos: ${item.counter_b}`);
+                      tooltipContent.push(`Kaikki sisäänpäin: ${item.total_counter_a}`);
+                      tooltipContent.push(`Kaikki ulospäin: ${item.total_counter_b}`);
+
+                      return tooltipContent;
                     },
                   },
                 },
-                maintainAspectRatio: false,
-                scales: {
-                  x: {
-                    type: 'time',
-                    time: {
-                      parser: 'HH:mm',
-                      unit: 'hour',
-                      stepSize: 1,
-                      displayFormats: {
-                        hour: 'HH:mm'
-                      }
-                    },
-                    ticks: {
-                      source: 'labels',
-                      stepSize: 1,
-                      min: moment().startOf('day').subtract(1, 'hour'),
-                      max: moment().endOf('day').add(1, 'hour'),
-                      callback: function (value, index, values) {
-                        return labels[index % labels.length];
-                      }
+              },
+              maintainAspectRatio: false,
+              scales: {
+                x: {
+                  type: 'time',
+                  time: {
+                    parser: 'HH:mm',
+                    unit: 'hour',
+                    stepSize: 1,
+                    displayFormats: {
+                      hour: 'HH:mm'
                     }
                   },
-                  y: {
-                    ticks: {
-                      stepSize: 0.5,
-                    },
+                  ticks: {
+                    source: 'labels',
+                    stepSize: 1,
+                    min: moment().startOf('day').subtract(1, 'hour'),
+                    max: moment().endOf('day').add(1, 'hour'),
+                    callback: function (value, index, values) {
+                      return labels[index % labels.length];
+                    }
+                  }
+                },
+                y: {
+                  suggestedMin: 0,
+                  suggestedMax: 100,
+                  ticks: {
+                    stepSize: 10,
+                    callback: function (value, index, values) {
+                      return value;
+                    }
                   },
                 },
-              }}
-            />
+              },
+            }}
+          />
         </div>
         <div className="dayPicker">
           <DayPicker
@@ -282,76 +305,8 @@ export default function PeopleCounter() {
         </div>
       </div>
       <div className="NodeInfo">
-        <h4>TÄHÄN VOISI JOTAIN LAITTAA</h4>
+        <h4>{calculateTotalCounterAForDay(data)} kävijää tänään</h4>
       </div>
-      {/* <div className='chart'>
-        <Line
-          data={{
-            labels: data && data.map((data) => formatTimestampForChart(data.timestamp)),
-            datasets: [
-              {
-                label: "Lämpötila",
-                data: data && data.map((data) => ({
-                  x: formatTimestampForChart(data.timestamp),
-                  y: (roundTemperature(data.temperature))
-                })),
-                backgroundColor: "#064FF0",
-                borderColor: "#064FF0",
-              }
-            ],
-          }}
-          options={{
-            maintainAspectRatio: false,
-            scales: {
-              y: {
-                ticks: {
-                  stepSize: 0.5,
-                  callback: function (value, index, values) { // Poista desimaalit, jos ne ovat nolla
-                    return value % 1 === 0 ? value.toFixed(0) : value.toFixed(1);
-                  },
-                },
-              },
-            },
-          }}
-        />
-      </div> */}
-      {/* <div className="NodeInfo">
-        <button
-          className="dayPickerButtons"
-          onClick={() => toggleDataVisibility()}
-          style={{
-            backgroundColor: isDataVisible ? "black" : "#e21313",
-            color: isDataVisible ? "white" : "black",
-          }}
-        >
-          {isDataVisible ? "Piilota datapisteet" : "Näytä datapisteet"}
-        </button>
-      </div>
-      <div>
-        <button
-          onClick={() => {
-            console.log(data);
-          }}
-        >
-          Click
-        </button>
-      </div>
-      <div className="dataPointsContainer">
-        {isDataVisible &&
-          data &&
-          data.map((item) => (
-            <div key={item.id} className="dataPoint">
-              <h4>{formatTimestamp(item.timestamp)}</h4>
-              <p>Lämpötila: {roundTemperature(item.temperature)}°C</p>
-              <p>Kosteus: {item.humidity}%</p>
-              {isOutside ? (
-                <p>Ilmanpaine: {item.pressure} mbar</p>
-              ) : (
-                <p>Vesivahinko: {waterLeak(item.waterleak)}</p>
-              )}
-            </div>
-          ))}
-      </div> */}
     </div>
   );
 }
