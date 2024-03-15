@@ -22,7 +22,7 @@ export default function NodeInfo({ isOutside }) {
 
   useEffect(() => {
     if (isToday(selected)) {
-      const socket = io("http://localhost:3000");
+      const socket = io(import.meta.env.VITE_BACKEND_URL);
       socket.on("dataUpdated", fetchDataFromDatabase);
       return () => {
         socket.disconnect();
@@ -39,7 +39,7 @@ export default function NodeInfo({ isOutside }) {
       const endpoint = isOutside ? "byDateOutside" : "byDateInside";
       const formattedDate = format(selected, "yyyy-MM-dd");
       const response = await fetch(
-        `http://localhost:3000/${endpoint}?date=${formattedDate}`
+        `${import.meta.env.VITE_BACKEND_URL}/${endpoint}?date=${formattedDate}`
       );
       const result = await response.json();
 

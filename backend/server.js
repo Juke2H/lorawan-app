@@ -20,7 +20,7 @@ const app = express();
 const server = http.createServer(app);
 
 const corsOptions = {
-  origin: "http://localhost:8000",
+  origin: process.env.FRONTEND_URL,
   methods: "GET",
   credentials: true,
   optionsSuccessStatus: 204,
@@ -32,8 +32,6 @@ app.use(express.json());
 const io = socketIo(server, {
   cors: corsOptions,
 });
-
-const socketIoPort = 3001;
 
 // MQTT connection
 // Fill in
@@ -51,16 +49,19 @@ pool.query("SELECT NOW()", (err, res) => {
 // Handle MQTT messages
 // Fill in
 mqttClient.on("connect", () => {
-  mqttClient.subscribe(process.env.MQTT_TOPIC);
+  mqttClient.subscribe(process.env.MQTT_TOPIC_I);
+  // mqttClient.subscribe(process.env.MQTT_TOPIC_O);
   mqttClient.subscribe(process.env.MQTT_TOPIC_PC); // Replace with your MQTT topic
   console.log("Connected to MQTT broker");
 });
 
+
+
 mqttClient.on("message", (topic, message) => {
-  // Assuming the message is in JSON format
-  const data = JSON.parse(message.toString());
-  // console.log(data);
-  io.emit("dataUpdated");
+  try {
+    const data = JSON.parse(message.toString());
+    io.emit("dataUpdated");
+    console.log(data);
 
   // Insert data into PostgreSQL database
   // Fill in
@@ -147,6 +148,10 @@ mqttClient.on("message", (topic, message) => {
       }
     );
   }
+} catch (error) {
+  console.error("Invalid JSON message:", message.toString());
+  console.error("Error:", error);
+}
 });
 
 // Get Queries
@@ -212,7 +217,7 @@ const getLatestOutsideMeasurement = (request, response) => {
   });
 };
 
- const byDateInside = async (req, res) => {
+const byDateInside = async (req, res) => {
   const requestedDate = req.query.date;
 
   if (!requestedDate) {
@@ -233,7 +238,7 @@ const getLatestOutsideMeasurement = (request, response) => {
   }
 };
 
- const byDateOutside = async (req, res) => {
+const byDateOutside = async (req, res) => {
   const requestedDate = req.query.date;
 
   if (!requestedDate) {
@@ -275,10 +280,9 @@ const byDatePC = async (req, res) => {
   }
 };
 
-const port = process.env.PORT || 3000;
-server.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
-  console.log(`Socket.IO server is running on http://localhost:${socketIoPort}`);
+server.listen(process.env.SERVER_PORT, () => {
+  console.log(`Server is running on ${process.env.SERVER_URL}${process.env.SERVER_PORT}`);
+  console.log(`Socket.IO server is running on ${process.env.SOCKET_IO_URL}`);
 });
 
 app.get("/", (request, response) => {

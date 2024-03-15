@@ -21,7 +21,7 @@ export default function PeopleCounter() {
 
   useEffect(() => {
     if (isToday(selected)) {
-      const socket = io("http://localhost:3000");
+      const socket = io(import.meta.env.VITE_BACKEND_URL);
       socket.on("dataUpdated", fetchDataFromDatabase);
       return () => {
         socket.disconnect();
@@ -37,7 +37,7 @@ export default function PeopleCounter() {
       }
       const formattedDate = format(selected, "yyyy-MM-dd");
       const response = await fetch(
-        `http://localhost:3000/byDatePC?date=${formattedDate}`
+        `${import.meta.env.VITE_BACKEND_URL}/byDatePC?date=${formattedDate}`
       );
       const result = await response.json();
 
@@ -127,14 +127,8 @@ export default function PeopleCounter() {
                         tooltipContent.push(`Aika: ${formattedTimestamp}`);
                         tooltipContent.push(`Kävijöitä sisälle: ${item.counter_a}`);
                         tooltipContent.push(`Kävijöitä ulos: ${item.counter_b}`);
-                        tooltipContent.push(`Kaikki sisäänpäin: ${item.total_counter_a}`);
-                        tooltipContent.push(`Kaikki ulospäin: ${item.total_counter_b}`);
 
                         return tooltipContent;
-                      },
-                      title: function(tooltipItems) {
-                        // Voit palauttaa haluamasi otsikon tässä
-                        return 'Otsikko';
                       },
                     },
                   },
@@ -237,8 +231,6 @@ export default function PeopleCounter() {
                       tooltipContent.push(`Aika: ${formattedTimestamp}`);
                       tooltipContent.push(`Kävijöitä sisälle: ${item.counter_a}`);
                       tooltipContent.push(`Kävijöitä ulos: ${item.counter_b}`);
-                      tooltipContent.push(`Kaikki sisäänpäin: ${item.total_counter_a}`);
-                      tooltipContent.push(`Kaikki ulospäin: ${item.total_counter_b}`);
 
                       return tooltipContent;
                     },
@@ -305,7 +297,7 @@ export default function PeopleCounter() {
         </div>
       </div>
       <div className="NodeInfo">
-        <h4>{calculateTotalCounterAForDay(data)} kävijää tänään</h4>
+        <h4>Yhteensä {calculateTotalCounterAForDay(data)} kävijää</h4>
       </div>
     </div>
   );

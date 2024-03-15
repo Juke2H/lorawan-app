@@ -11,7 +11,7 @@ export default function LatestMeasurement ({ isOutside }) {
   }, [isOutside]);
 
   useEffect(() => {
-    const socket = io("http://localhost:3000");
+    const socket = io(import.meta.env.VITE_BACKEND_URL);
 
     socket.on("dataUpdated", fetchDataFromDatabase);
   }, []);
@@ -22,7 +22,7 @@ export default function LatestMeasurement ({ isOutside }) {
       const endpoint = isOutside
         ? "getLatestOutsideMeasurement"
         : "getLatestInsideMeasurement";
-      const response = await fetch(`http://localhost:3000/${endpoint}`);
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/${endpoint}`);
       const result = await response.json();
 
       setResponseBody(result.data);

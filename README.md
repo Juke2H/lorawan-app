@@ -22,6 +22,30 @@ Build for visualizing data send by Lorawan nodes.
 ## Installation instructions
 
 1. Clone the project: `https://git@github.com:Juke2H/appserv-node-docker.git`
+2. Make two .env files, one inside backend folder and second inside frontend folder with these enviroment variables:
+
+backend/.env:
+
+POSTGRES_USER=
+POSTGRES_HOST=
+POSTGRES_DB=
+POSTGRES_PASSWORD=
+POSTGRES_PORT=
+
+MQTT_TOPIC_I=
+MQTT_TOPIC_O=
+MQTT_TOPIC_PC=
+MQTT_URL=
+
+SERVER_PORT=
+SOCKET_IO_URL=
+SERVER_URL=
+FRONTEND_URL=
+
+frontend/.env:
+
+VITE_BACKEND_URL=
+
 2. Navigate to the project directory: `cd appserv-node-docker/`
 3. Start the application: `docker compose up`
 4. Open a browser at `http://localhost:8000`
