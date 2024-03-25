@@ -1,0 +1,74 @@
+.cal {
+  display:flex;
+  flex-direction:row;
+  width:100%;
+  max-width: 1000px;
+  min-width: none;
+  justify-content: center;
+}
+
+.chart {
+  text-align: center;
+  display: flex;
+  justify-content: left;
+}
+
+.chart canvas {
+  width: 100%;
+  min-width: 700px;
+  height: auto;
+}
+
+.dataPointsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 3500px;
+}
+
+.dataPoint {
+  border: 1px solid #ddd;
+  padding: 1px;
+  flex: 1 1 150px;
+  margin: 10px;
+}
+
+.NodeInfo {
+  max-width: 1000px;
+  justify-content: center;
+}
+
+.dayPicker, .chart {
+  flex: auto;
+}
+
+/* Daypicker css */
+
+.dayPicker {
+  display: flex;
+  justify-content: right;
+}
+
+.my-selected:not([disabled]) { 
+  font-weight: bold; 
+  border: 3px solid #e21313;
+  border-color: #e21313;
+  color: #e21313;
+}
+
+.my-selected:hover:not([disabled]) { 
+  border-color: #e21313;
+  color: #e21313;
+  border: 3px solid #e21313;
+}
+
+.my-today { 
+  font-weight: bold !important;
+  font-size: 130% !important;
+}
+
+.rdp {
+  --rdp-accent-color: #e21313 !important;
+  --rdp-accent-color-dark: #e21313 !important;
+  --rdp-background-color: #d47373 !important;
+  --rdp-background-color-dark: #e55555 !important;
+}

@@ -59,6 +59,8 @@ services:
     build: frontend
     ports:
       - 8000:8000
+    env_file:
+      - ./frontend/.env
     # Specifies the working directory inside the container.
     working_dir: /usr/src/server
     # Specifies volumes to be mounted. Same function, different syntax.

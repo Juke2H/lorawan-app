@@ -20,7 +20,7 @@ const app = express();
 const server = http.createServer(app);
 
 const corsOptions = {
-  origin: "http://localhost:8000",
+  origin: process.env.FRONTEND_URL,
   methods: "GET",
   credentials: true,
   optionsSuccessStatus: 204,
@@ -32,8 +32,6 @@ app.use(express.json());
 const io = socketIo(server, {
   cors: corsOptions,
 });
-
-const socketIoPort = 3001;
 
 // MQTT connection
 // Fill in
@@ -51,21 +49,53 @@ pool.query("SELECT NOW()", (err, res) => {
 // Handle MQTT messages
 // Fill in
 mqttClient.on("connect", () => {
-  mqttClient.subscribe(process.env.MQTT_TOPIC); // Replace with your MQTT topic
+  mqttClient.subscribe(process.env.MQTT_TOPIC_I);
+  // mqttClient.subscribe(process.env.MQTT_TOPIC_O);
+  mqttClient.subscribe(process.env.MQTT_TOPIC_PC); // Replace with your MQTT topic
   console.log("Connected to MQTT broker");
 });
 
+
+
 mqttClient.on("message", (topic, message) => {
-  // Assuming the message is in JSON format
-  const data = JSON.parse(message.toString());
-  // console.log(data);
-  io.emit("dataUpdated");
+  try {
+    const data = JSON.parse(message.toString());
+    io.emit("dataUpdated");
+    console.log(data);
 
   // Insert data into PostgreSQL database
   // Fill in
   let importantData;
 
-  if (data.deviceInfo.deviceProfileName == "Ulkolämpömittari") {
+  if (data.deviceInfo.deviceProfileName == "IMBuildings People Counter") {
+    importantData = {
+      devEui: data.deviceInfo.devEui,
+      time: data.rxInfo[0].nsTime,
+      counter_a: data.object.counter_a,
+      counter_b: data.object.counter_b,
+      total_counter_a: data.object.total_counter_a,
+      total_counter_b: data.object.total_counter_b
+    };
+
+    pool.query(
+      "INSERT INTO measurements3 (device_id, timestamp, counter_a, counter_b, total_counter_a, total_counter_b) VALUES ($1, $2, $3, $4, $5, $6)",
+      [
+        data.deviceInfo.devEui,
+        data.rxInfo[0].nsTime,
+        data.object.counter_a,
+        data.object.counter_b,
+        data.object.total_counter_a,
+        data.object.total_counter_b
+      ],
+      (err) => {
+        if (err) {
+          console.error("Error inserting data into the database", err);
+        } else {
+          console.log("Data inserted into PostgreSQL database:", importantData);
+        }
+      }
+    );
+  } else if (data.deviceInfo.deviceProfileName == "Ulkolämpömittari") {
     importantData = {
       devEui: data.deviceInfo.devEui,
       time: data.rxInfo[0].nsTime,
@@ -118,6 +148,10 @@ mqttClient.on("message", (topic, message) => {
       }
     );
   }
+} catch (error) {
+  console.error("Invalid JSON message:", message.toString());
+  console.error("Error:", error);
+}
 });
 
 // Get Queries
@@ -183,7 +217,7 @@ const getLatestOutsideMeasurement = (request, response) => {
   });
 };
 
- const byDateInside = async (req, res) => {
+const byDateInside = async (req, res) => {
   const requestedDate = req.query.date;
 
   if (!requestedDate) {
@@ -204,7 +238,7 @@ const getLatestOutsideMeasurement = (request, response) => {
   }
 };
 
- const byDateOutside = async (req, res) => {
+const byDateOutside = async (req, res) => {
   const requestedDate = req.query.date;
 
   if (!requestedDate) {
@@ -225,10 +259,30 @@ const getLatestOutsideMeasurement = (request, response) => {
   }
 };
 
-const port = process.env.PORT || 3000;
-server.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
-  console.log(`Socket.IO server is running on http://localhost:${socketIoPort}`);
+const byDatePC = async (req, res) => {
+  const requestedDate = req.query.date;
+
+  if (!requestedDate) {
+    return res.status(400).json({ error: "Date parameter is missing" });
+  }
+
+  try {
+    const result = await pool.query(
+      "SELECT * FROM measurements3 WHERE CAST(timestamp AT TIME ZONE 'UTC' AT TIME ZONE 'Europe/Helsinki' AS DATE) = $1",
+      [requestedDate]
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error executing database query:", error);
+    res
+      .status(500)
+      .json({ error: "Internal server error", details: error.message });
+  }
+};
+
+server.listen(process.env.SERVER_PORT, () => {
+  console.log(`Server is running on ${process.env.SERVER_URL}${process.env.SERVER_PORT}`);
+  console.log(`Socket.IO server is running on ${process.env.SOCKET_IO_URL}`);
 });
 
 app.get("/", (request, response) => {
@@ -242,3 +296,4 @@ app.get("/getLatestInsideMeasurement", getLatestInsideMeasurement);
 app.get("/getLatestOutsideMeasurement", getLatestOutsideMeasurement);
 app.get("/byDateInside", byDateInside);
 app.get("/byDateOutside", byDateOutside);
+app.get("/byDatePC", byDatePC);

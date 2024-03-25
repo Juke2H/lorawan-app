@@ -11,6 +11,8 @@ export default function NavBar() {
       setActiveButton("inside");
     } else if (location.pathname === "/NodeInfoOutside") {
       setActiveButton("outside");
+    } else if (location.pathname === "/PeopleCounter") {
+      setActiveButton("peopleCounter");
     } else {
       setActiveButton("none");
     }
@@ -33,6 +35,21 @@ export default function NavBar() {
               }}
             >
               Sisälämpömittari
+            </button>
+          </Link>
+          <Link
+            to="/PeopleCounter"
+            className="homeButtons"
+          >
+            <button
+              className="navBtn"
+              style={{
+                backgroundColor:
+                  activeButton === "peopleCounter" ? "black" : "#e21313",
+                color: activeButton === "peopleCounter" ? "white" : "black",
+              }}
+            >
+              Kävijälaskuri
             </button>
           </Link>
           <Link

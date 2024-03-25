@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import NavBar from "./components/navBar/navBar.jsx";
 import DashBoard from "./components/dashBoard/DashBoard.jsx";
+import PeopleCounter from "./components/PeopleCounter/PeopleCounter.jsx";
 import "./index.css";
 
 const router = createBrowserRouter([
@@ -18,7 +19,10 @@ const router = createBrowserRouter([
       {
         path: "NodeInfoOutside",
         element: <DashBoard isOutside={true}/>,
-      },
+      }, {
+        path: "PeopleCounter",
+        element: <PeopleCounter />,
+      }
     ],
   },
 ]);
