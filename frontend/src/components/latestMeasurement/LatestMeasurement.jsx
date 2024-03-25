@@ -1,21 +1,25 @@
 import React, { useState, useEffect } from "react";
 import io from "socket.io-client";
 
+// LatestMeasurement component function taking 'isOutside' prop
 export default function LatestMeasurement ({ isOutside }) {
   const [responseBody, setResponseBody] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [node, setNode] = useState({});
 
+  // Fetch data from the database when 'isOutside' prop changes
   useEffect(() => {
     fetchDataFromDatabase();
   }, [isOutside]);
 
+  // Creating WebSocket connection to the backend server and listening for data updates
   useEffect(() => {
     const socket = io(import.meta.env.VITE_BACKEND_URL);
 
     socket.on("dataUpdated", fetchDataFromDatabase);
   }, []);
 
+  // Function to fetch data from the database
   const fetchDataFromDatabase = async () => {
     setIsLoading(true);
     try {
@@ -26,7 +30,7 @@ export default function LatestMeasurement ({ isOutside }) {
       const result = await response.json();
 
       setResponseBody(result.data);
-      const { id, device_id, ...newObj } = result[0];
+      const { id, device_id, ...newObj } = result[0]; // Extract relevant data from response
       setNode(newObj);
     } catch (error) {
       console.error("Error fetching data from database:", error);
@@ -35,18 +39,20 @@ export default function LatestMeasurement ({ isOutside }) {
     }
   };
 
+  // Function to format timestamp
   function formatTimestamp(timestamp) {
     const dateObj = new Date(timestamp);
     const day = dateObj.getDate();
     const month = dateObj.toLocaleString("default", { month: "long" });
     const year = dateObj.getFullYear();
-    const hours = dateObj.getHours().toString().padStart(2, "0");
+    const hours = dateObj.getHours().toString().padStart(2, "0"); // Get hours with leading zero if necessary
     const minutes = dateObj.getMinutes().toString().padStart(2, "0");
     const seconds = dateObj.getSeconds().toString().padStart(2, "0");
 
     return <p>{day}. {month} {year} <br /> klo: {hours}:{minutes}:{seconds}</p>;
   }
 
+  // Function to format water leak status
   function waterLeak(isWaterLeaking) {
     if (isWaterLeaking == 0) {
       isWaterLeaking = "Ei";
@@ -55,7 +61,7 @@ export default function LatestMeasurement ({ isOutside }) {
     }
     return isWaterLeaking;
   }
-
+  // Return statement for a timestamp and three values
   return (
     <div>
       {isLoading && <div>Loading...</div>}

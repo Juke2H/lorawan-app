@@ -10,14 +10,17 @@ import io from "socket.io-client";
 import moment from 'moment';
 import 'chartjs-adapter-moment';
 
+// Define PeopleCounter component
 export default function PeopleCounter() {
   const [selected, setSelected] = useState(new Date());
   const [data, setData] = useState(null);
 
+  // Effect hook to fetch data from the database when selected date changes
   useEffect(() => {
     fetchDataFromDatabase();
   }, [selected]);
 
+  // Effect hook to establish Socket.IO connection when selected date is today
   useEffect(() => {
     if (isToday(selected)) {
       const socket = io(import.meta.env.VITE_BACKEND_URL);
@@ -28,6 +31,7 @@ export default function PeopleCounter() {
     }
   }, [selected]);
 
+  // Function to fetch data from the database based on the selected date
   const fetchDataFromDatabase = async () => {
     try {
       if (!selected) {
@@ -46,6 +50,7 @@ export default function PeopleCounter() {
     }
   };
 
+  // Function to format timestamp for chart tooltip
   function formatTimestampForChart(timestamp) {
     const dateObj = new Date(timestamp);
     const hours = dateObj.getHours().toString().padStart(2, "0");
@@ -53,6 +58,7 @@ export default function PeopleCounter() {
     return `${hours}:${minutes}`;
   }
 
+  // Function to calculate total counter A for the selected day
   function calculateTotalCounterAForDay(data) {
     let totalCounterA = 0;
 
@@ -63,18 +69,20 @@ export default function PeopleCounter() {
     return totalCounterA;
   }
 
+  // Configure Chart.js defaults
   ChartJS.defaults.font.size = 14;
   ChartJS.defaults.font.weight = "bold";
   ChartJS.defaults.color = "#030101";
 
+  // Define fixed time labels for chart (00:00 - 24:00)
   const labels = Array.from({ length: 24 }, (_, i) => moment().startOf('day').add(i, 'hours').format('HH:mm'));
-
   const fixedTimeLabels = [
     "00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00",
     "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00",
     "20:00", "21:00", "22:00", "23:00", "24:00"
   ];
 
+  // A conditional return if selected date is null or no data is fetched
   if (!selected || (data && data.length === 0))
     return (
       <div>
@@ -160,7 +168,8 @@ export default function PeopleCounter() {
         </div>
       </div>
     );
-
+    
+  // Return bar chart with fetched data and total counter A information
   return (
     <div>
       <div className="cal">

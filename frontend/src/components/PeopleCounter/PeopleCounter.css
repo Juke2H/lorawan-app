@@ -1,3 +1,4 @@
+/* Copied from NodeInfo.css */
 .cal {
   display:flex;
   flex-direction:row;
@@ -40,8 +41,6 @@
 .dayPicker, .chart {
   flex: auto;
 }
-
-/* Daypicker css */
 
 .dayPicker {
   display: flex;

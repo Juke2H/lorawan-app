@@ -1,3 +1,4 @@
+/* Container for the calendar and chart */
 .cal {
   display:flex;
   flex-direction:row;
@@ -7,24 +8,28 @@
   justify-content: center;
 }
 
+/* Styling for the chart */
 .chart {
   text-align: center;
   display: flex;
   justify-content: left;
 }
 
+/* Styling for the chart canvas */
 .chart canvas {
   width: 100%;
   min-width: 700px;
   height: auto;
 }
 
+/* Container for data points */
 .dataPointsContainer {
   display: flex;
   flex-wrap: wrap;
   max-width: 3500px;
 }
 
+/* Styling for individual data points */
 .dataPoint {
   border: 1px solid #ddd;
   padding: 1px;
@@ -32,40 +37,45 @@
   margin: 10px;
 }
 
+/* Styling for the node information section */
 .NodeInfo {
   max-width: 1000px;
   justify-content: center;
 }
 
+/* Styling for the day picker and chart */
 .dayPicker, .chart {
   flex: auto;
 }
 
-/* Daypicker css */
-
+/* Styling for the day picker */
 .dayPicker {
   display: flex;
   justify-content: right;
 }
 
+/* Styling for the selected date */
 .my-selected:not([disabled]) { 
-  font-weight: bold; 
+  font-weight: bold;
   border: 3px solid #e21313;
   border-color: #e21313;
   color: #e21313;
 }
 
+/* Hover effect for selected date */
 .my-selected:hover:not([disabled]) { 
   border-color: #e21313;
   color: #e21313;
   border: 3px solid #e21313;
 }
 
+/* Styling for today's date */
 .my-today { 
   font-weight: bold !important;
   font-size: 130% !important;
 }
 
+/* Styling for the React Day Picker component */
 .rdp {
   --rdp-accent-color: #e21313 !important;
   --rdp-accent-color-dark: #e21313 !important;

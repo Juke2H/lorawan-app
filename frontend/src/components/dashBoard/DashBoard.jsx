@@ -3,8 +3,8 @@ import NodeInfo from "../NodeInfo/NodeInfo";
 import LatestMeasurement from "../latestMeasurement/LatestMeasurement";
 import "./DashBoard.css";
 
-export default function DashBoard ({ isOutside }) {
-
+// Return is conditional based on the isOutside prop in NodeInfo
+export default function DashBoard({ isOutside }) {
   return (
     <div>
       {isOutside ? (
@@ -23,4 +23,4 @@ export default function DashBoard ({ isOutside }) {
       )}
     </div>
   );
-};
+}

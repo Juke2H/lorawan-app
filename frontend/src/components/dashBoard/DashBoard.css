@@ -1,6 +1,7 @@
+/* Styling for the grid container */
 .nodes {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, 1fr); /* Creating four equal-width columns */
   gap: 2px;
   width: 100%;
   height: 100px;
@@ -9,6 +10,7 @@
   justify-content: center;
 }
 
+/* Styling for each grid item */
 .nodeZero,
 .nodeOne,
 .nodeTwo,

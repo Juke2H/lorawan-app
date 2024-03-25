@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import "./navBar.css";
 
+// Define NavBar component
 export default function NavBar() {
   const [activeButton, setActiveButton] = useState("none");
   const location = useLocation();
 
+  // Effect to update the activeButton state based on the current location
   useEffect(() => {
     if (location.pathname === "/NodeInfoInside") {
       setActiveButton("inside");
@@ -18,6 +20,7 @@ export default function NavBar() {
     }
   }, [location]);
 
+  // Render the NavBar component
   return (
     <div className="margin">
       <nav>

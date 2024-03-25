@@ -11,15 +11,18 @@ import io from "socket.io-client";
 import moment from 'moment';
 import 'chartjs-adapter-moment';
 
+// Define NodeInfo component with a prop
 export default function NodeInfo({ isOutside }) {
   const [selected, setSelected] = useState(new Date());
   const [data, setData] = useState(null);
   // const [isDataVisible, setDataVisibility] = useState(false);
 
+  // Effect hook to fetch data from the database when selected date changes
   useEffect(() => {
     fetchDataFromDatabase();
   }, [selected]);
 
+  // Effect hook to establish Socket.IO connection when selected date is today
   useEffect(() => {
     if (isToday(selected)) {
       const socket = io(import.meta.env.VITE_BACKEND_URL);
@@ -30,10 +33,11 @@ export default function NodeInfo({ isOutside }) {
     }
   }, [selected]);
 
+  // Function to fetch data from the database based on the selected date
   const fetchDataFromDatabase = async () => {
     try {
       if (!selected) {
-        setData(null);
+        setData(null); // Reset data if there is no selected date
         return;
       }
       const endpoint = isOutside ? "byDateOutside" : "byDateInside";
@@ -65,6 +69,7 @@ export default function NodeInfo({ isOutside }) {
   //   return <p>{day}. {month} {year} <br /> klo: {hours}:{minutes}:{seconds}</p>;
   // }
 
+  // Function to determine water leak status text based on numeric value
   function waterLeak(isWaterLeaking) {
     if (isWaterLeaking == 0) {
       isWaterLeaking = "Ei";
@@ -74,13 +79,14 @@ export default function NodeInfo({ isOutside }) {
     return isWaterLeaking;
   }
 
+  // Function to calculate average temperature from fetched data
   function calculateAverageTemperature() {
     if (!data || data.length === 0) {
       return 0;
     }
     const totalTemperature = data.reduce((sum, item) => {
       const temperature = parseFloat(item.temperature);
-      return sum + (!isNaN(temperature) ? temperature : 0);
+      return sum + (!isNaN(temperature) ? temperature : 0); // Add temperature to sum if it's a valid number
     }, 0);
     const averageTemperature = totalTemperature / data.length;
     if (isNaN(averageTemperature)) {
@@ -89,6 +95,7 @@ export default function NodeInfo({ isOutside }) {
     return averageTemperature.toFixed(1);
   }
 
+  // Function to round temperature to 1 decimal place or whole number
   function roundTemperature(temperature) {
     if (!temperature && temperature !== 0) {
       return 0;
@@ -106,6 +113,7 @@ export default function NodeInfo({ isOutside }) {
       : strippedTemperature.toFixed(1);
   }
 
+  // Function to format timestamp for chart tooltip
   function formatTimestampForChart(timestamp) {
     const dateObj = new Date(timestamp);
     const hours = dateObj.getHours().toString().padStart(2, "0");
@@ -113,19 +121,20 @@ export default function NodeInfo({ isOutside }) {
     return `${hours}:${minutes}`;
   }
 
+  // Configure Chart.js defaults
   ChartJS.defaults.font.size = 14;
   ChartJS.defaults.font.weight = "bold";
   ChartJS.defaults.color = "#030101";
 
+  // Define fixed time labels for chart (00:00 - 24:00)
   const labels = Array.from({ length: 24 }, (_, i) => moment().startOf('day').add(i, 'hours').format('HH:mm'));
-
   const fixedTimeLabels = [
     "00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00",
     "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00",
     "20:00", "21:00", "22:00", "23:00", "24:00"
   ];
 
-
+  // A conditional return if selected date is null or no data is fetched
   if (!selected || (data && data.length === 0))
     return (
       <div>
@@ -245,6 +254,7 @@ export default function NodeInfo({ isOutside }) {
       </div>
     );
 
+  // Return line chart with fetched data and average temperature information
   return (
     <div>
       <div className="cal">
@@ -315,7 +325,6 @@ export default function NodeInfo({ isOutside }) {
                   ticks: {
                     stepSize: 0.5,
                     callback: function (value, index, values) {
-                      // Poista desimaalit, jos ne ovat nolla
                       return value % 1 === 0
                         ? value.toFixed(0)
                         : value.toFixed(1);
