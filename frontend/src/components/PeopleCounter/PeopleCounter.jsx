@@ -4,7 +4,6 @@ import { format, isToday } from "date-fns";
 import { fi } from "date-fns/locale";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
-import { useNavigate } from "react-router-dom";
 import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS } from "chart.js/auto";
 import io from "socket.io-client";
@@ -47,22 +46,6 @@ export default function PeopleCounter() {
     }
   };
 
-  // function toggleDataVisibility() {
-  //   setDataVisibility(!isDataVisible);
-  // }
-
-  // function formatTimestamp(timestamp) {
-  //   const dateObj = new Date(timestamp);
-  //   const day = dateObj.getDate();
-  //   const month = dateObj.toLocaleString("default", { month: "long" });
-  //   const year = dateObj.getFullYear();
-  //   const hours = dateObj.getHours().toString().padStart(2, "0");
-  //   const minutes = dateObj.getMinutes().toString().padStart(2, "0");
-  //   const seconds = dateObj.getSeconds().toString().padStart(2, "0");
-
-  //   return <p>{day}. {month} {year} <br /> klo: {hours}:{minutes}:{seconds}</p>;
-  // }
-
   function formatTimestampForChart(timestamp) {
     const dateObj = new Date(timestamp);
     const hours = dateObj.getHours().toString().padStart(2, "0");
@@ -92,7 +75,6 @@ export default function PeopleCounter() {
     "20:00", "21:00", "22:00", "23:00", "24:00"
   ];
 
-
   if (!selected || (data && data.length === 0))
     return (
       <div>
@@ -114,25 +96,6 @@ export default function PeopleCounter() {
                 ],
               }}
               options={{
-                plugins: {
-                  tooltip: {
-                    callbacks: {
-                      label: function (tooltipItems) {
-                        const timestamp = tooltipItems.parsed.x;
-                        const formattedTimestamp = moment(timestamp).format('HH:mm');
-
-                        let item = data[tooltipItems.dataIndex];
-                        let tooltipContent = [];
-
-                        tooltipContent.push(`Aika: ${formattedTimestamp}`);
-                        tooltipContent.push(`Kävijöitä sisälle: ${item.counter_a}`);
-                        tooltipContent.push(`Kävijöitä ulos: ${item.counter_b}`);
-
-                        return tooltipContent;
-                      },
-                    },
-                  },
-                },
                 maintainAspectRatio: false,
                 scales: {
                   x: {
