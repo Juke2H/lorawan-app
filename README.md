@@ -12,7 +12,7 @@ Build for visualizing data send by Lorawan nodes.
 ## Features
 
 - Select a specific node to open info page
-- Infopage includes linechart, datapoints and calendar to change date.
+- Infopage includes chart, datapoints and calendar to change date.
 
 ## Requirements
 
@@ -23,35 +23,13 @@ Build for visualizing data send by Lorawan nodes.
 
 1. Clone the project:
    ```
-   https://github.com/Juke2H/appserv-node-docker.git
+   git@github.com:Juke2H/lorawan-app.git
    ```
-2. Check and set environment variables:
-
-    backend/.env:
-    ```
-    POSTGRES_USER=
-    POSTGRES_HOST=
-    POSTGRES_DB=
-    POSTGRES_PASSWORD=
-    POSTGRES_PORT=
-    
-    MQTT_TOPIC_I=
-    MQTT_TOPIC_O=
-    MQTT_TOPIC_PC=
-    MQTT_URL=
-    
-    SERVER_PORT=
-    SOCKET_IO_URL=
-    SERVER_URL=
-    FRONTEND_URL=
-    ```
-    frontend/.env:
-    ```
-    VITE_BACKEND_URL=
+2. Check and set environment variables to both .env.example files. Rename files to .env
     ```
 3. Navigate to the project directory:
    ```
-   cd appserv-node-docker/
+   cd lorawan-app/
    ```
 4. Start the application:
    ```
