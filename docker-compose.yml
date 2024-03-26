@@ -7,9 +7,9 @@ volumes:
 # Defines services to be run.
 services:
   # Service for PostgreSQL database.
-  db:
+  postgres_db:
     # Specifies the name of the container.
-    container_name: postgres_riveria
+    container_name: postgres_db
     # Specifies the Docker image to be used for the container.
     image: postgres:16.1
     # Specifies port mapping from host to container.
@@ -26,13 +26,13 @@ services:
         - dbvolume:/var/lib/postgresql/data
   
   # Service for the backend application.
-  appservnodedocker:
-    container_name: appserv_riveria
+  backend-server:
+    container_name: backend-server
     # Specifies the build context for the container.
     build: backend
     # Specifies dependencies on other services.
     depends_on:
-      - db
+      - postgres_db
     env_file:
       - ./backend/.env  
     # environment:
@@ -47,15 +47,15 @@ services:
     container_name: local_mosquitto
     image: eclipse-mosquitto
     depends_on:
-      - db
+      - postgres_db
     ports:
       - 1883:1883
     volumes:
       - ./mqtt/mosquitto.conf:/mosquitto/config/mosquitto.conf
 
   # Service for Vite frontend development server.
-  vite_docker:
-    container_name: vite_riveria
+  lorawan-ui:
+    container_name: lorawan-ui
     build: frontend
     ports:
       - 8000:8000
