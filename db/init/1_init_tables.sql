@@ -1,3 +1,4 @@
+-- Create table 'measurements' to store outdoor sensor data
 CREATE TABLE measurements (
     id     bigint not null GENERATED ALWAYS AS IDENTITY,
     device_id      varchar,
@@ -7,9 +8,13 @@ CREATE TABLE measurements (
 	pressure       numeric
 );
 
+-- Create index on timestamp column for faster retrieval of data based on time
 CREATE INDEX timestamp_1 ON measurements (timestamp);
-ANALYZE VERBOSE;
 
+-- Analyze table to gather statistics for query optimization
+ANALYZE VERBOSE measurements;
+
+-- Create table 'measurements2' to store indoor sensor data
 CREATE TABLE measurements2 (
     id     bigint not null GENERATED ALWAYS AS IDENTITY,
     device_id      varchar,
@@ -20,8 +25,10 @@ CREATE TABLE measurements2 (
 );
 
 CREATE INDEX timestamp_2 ON measurements2 (timestamp);
-ANALYZE VERBOSE;
 
+ANALYZE VERBOSE measurements2;
+
+-- Create table 'measurements3' to store people counter data
 CREATE TABLE measurements3 (
     id     bigint not null GENERATED ALWAYS AS IDENTITY,
     device_id      varchar,
@@ -33,4 +40,5 @@ CREATE TABLE measurements3 (
 );
 
 CREATE INDEX timestamp_3 ON measurements3 (timestamp);
-ANALYZE VERBOSE;
+
+ANALYZE VERBOSE measurements3;
