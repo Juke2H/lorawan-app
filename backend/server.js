@@ -6,8 +6,7 @@ const mqtt = require("mqtt");
 require("dotenv").config();
 const { Pool } = require("pg");
 
-// PostgreSQL connection pool
-// Fill in
+// Create a PostgreSQL connection pool
 const pool = new Pool({
   user: process.env.POSTGRES_USER,
   host: process.env.POSTGRES_HOST,
@@ -16,9 +15,11 @@ const pool = new Pool({
   port: process.env.POSTGRES_PORT,
 });
 
+// Create an Express application
 const app = express();
-const server = http.createServer(app);
+const server = http.createServer(app); // Create HTTP server using Express app
 
+// CORS configuration
 const corsOptions = {
   origin: process.env.FRONTEND_URL,
   methods: "GET",
@@ -26,18 +27,18 @@ const corsOptions = {
   optionsSuccessStatus: 204,
 };
 
+// Enable CORS with specified options
 app.use(cors(corsOptions));
+
+// Parse JSON request bodies
 app.use(express.json());
 
+// Initialize Socket.IO with HTTP server
 const io = socketIo(server, {
   cors: corsOptions,
 });
 
-// MQTT connection
-// Fill in
-const mqttClient = mqtt.connect(process.env.MQTT_URL); // Replace with your MQTT broker URL
-
-// Test the database connection
+// Test database connection
 pool.query("SELECT NOW()", (err, res) => {
   if (err) {
     console.error("Error connecting to the database", err);
@@ -46,28 +47,34 @@ pool.query("SELECT NOW()", (err, res) => {
   }
 });
 
-// Handle MQTT messages
-// Fill in
+// Connect to MQTT broker and subscribe to topics
+const mqttClient = mqtt.connect(process.env.MQTT_URL);
+
+// Use as many topics as necessary
 mqttClient.on("connect", () => {
   mqttClient.subscribe(process.env.MQTT_TOPIC_I);
-  // mqttClient.subscribe(process.env.MQTT_TOPIC_O);
-  mqttClient.subscribe(process.env.MQTT_TOPIC_PC); // Replace with your MQTT topic
+  mqttClient.subscribe(process.env.MQTT_TOPIC_O);
+  mqttClient.subscribe(process.env.MQTT_TOPIC_PC);
   console.log("Connected to MQTT broker");
 });
 
-
-
+// Handle MQTT messages
 mqttClient.on("message", (topic, message) => {
   try {
     const data = JSON.parse(message.toString());
+
+    // Emit Socket.IO event to notify frontend about new data
     io.emit("dataUpdated");
     console.log(data);
 
-  // Insert data into PostgreSQL database
-  // Fill in
-  let importantData;
+  let importantData; // Declare variable to store important data extracted from MQTT message
 
+  /* ChirpStack uses device profile templates to configure messages sent by devices under that template. For other Network Servers,
+  this conditional will likely need to be something else. The devices profiles here are for the devices this application was originally built for. */
+  
+  // Check device profile name to determine data insertion table.
   if (data.deviceInfo.deviceProfileName == "IMBuildings People Counter") {
+    // Extract important data for people counter devices
     importantData = {
       devEui: data.deviceInfo.devEui,
       time: data.rxInfo[0].nsTime,
@@ -77,6 +84,7 @@ mqttClient.on("message", (topic, message) => {
       total_counter_b: data.object.total_counter_b
     };
 
+    // Insert data into PostgreSQL database for people counter devices
     pool.query(
       "INSERT INTO measurements3 (device_id, timestamp, counter_a, counter_b, total_counter_a, total_counter_b) VALUES ($1, $2, $3, $4, $5, $6)",
       [
@@ -95,7 +103,8 @@ mqttClient.on("message", (topic, message) => {
         }
       }
     );
-  } else if (data.deviceInfo.deviceProfileName == "Ulkolämpömittari") {
+  } else if (data.deviceInfo.deviceProfileName == "Elsys ELT-2 HP outdoor sensor") {
+    // Extract important data for outdoor temperature/humidity/pressure devices
     importantData = {
       devEui: data.deviceInfo.devEui,
       time: data.rxInfo[0].nsTime,
@@ -121,7 +130,8 @@ mqttClient.on("message", (topic, message) => {
         }
       }
     );
-  } else if (data.deviceInfo.deviceProfileName == "Sisälämpömittari") {
+  } else if (data.deviceInfo.deviceProfileName == "Elsys EMS Lite indoor sensor") {
+    // Extract important data for indoor temperature/humidity/waterleak devices
     importantData = {
       devEui: data.deviceInfo.devEui,
       time: data.rxInfo[0].nsTime,
@@ -154,8 +164,7 @@ mqttClient.on("message", (topic, message) => {
 }
 });
 
-// Get Queries
-
+// Define route handlers for retrieving measurements
 const getOutsideMeasurementsByID = (request, response) => {
   const getQuery = "SELECT * FROM measurements ORDER BY device_id ASC LIMIT 1";
   pool.query(getQuery, (error, results) => {
@@ -280,11 +289,13 @@ const byDatePC = async (req, res) => {
   }
 };
 
+// Start the server
 server.listen(process.env.SERVER_PORT, () => {
   console.log(`Server is running on ${process.env.SERVER_URL}${process.env.SERVER_PORT}`);
   console.log(`Socket.IO server is running on ${process.env.SOCKET_IO_URL}`);
 });
 
+// Define URLs
 app.get("/", (request, response) => {
   response.json({ info: "Hello" });
 });
