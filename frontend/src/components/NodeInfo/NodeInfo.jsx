@@ -4,7 +4,6 @@ import { format, isToday } from "date-fns";
 import { fi } from "date-fns/locale";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
-import { useNavigate } from "react-router-dom";
 import { Line } from "react-chartjs-2";
 import { Chart as ChartJS } from "chart.js/auto";
 import io from "socket.io-client";
@@ -53,28 +52,12 @@ export default function NodeInfo({ isOutside }) {
     }
   };
 
-  // function toggleDataVisibility() {
-  //   setDataVisibility(!isDataVisible);
-  // }
-
-  // function formatTimestamp(timestamp) {
-  //   const dateObj = new Date(timestamp);
-  //   const day = dateObj.getDate();
-  //   const month = dateObj.toLocaleString("default", { month: "long" });
-  //   const year = dateObj.getFullYear();
-  //   const hours = dateObj.getHours().toString().padStart(2, "0");
-  //   const minutes = dateObj.getMinutes().toString().padStart(2, "0");
-  //   const seconds = dateObj.getSeconds().toString().padStart(2, "0");
-
-  //   return <p>{day}. {month} {year} <br /> klo: {hours}:{minutes}:{seconds}</p>;
-  // }
-
   // Function to determine water leak status text based on numeric value
   function waterLeak(isWaterLeaking) {
     if (isWaterLeaking == 0) {
-      isWaterLeaking = "Ei";
+      isWaterLeaking = "No";
     } else {
-      isWaterLeaking = "Kyllä";
+      isWaterLeaking = "Yes";
     }
     return isWaterLeaking;
   }
@@ -145,7 +128,7 @@ export default function NodeInfo({ isOutside }) {
                 labels: fixedTimeLabels,
                 datasets: [
                   {
-                    label: "Lämpötila",
+                    label: "Temperature",
                     data: data && data.map(data => ({
                       x: formatTimestampForChart(data.timestamp),
                       y: roundTemperature(data.temperature),
@@ -166,20 +149,20 @@ export default function NodeInfo({ isOutside }) {
                         let item = data[tooltipItems.dataIndex];
                         let tooltipContent = [];
 
-                        tooltipContent.push(`Aika: ${formattedTimestamp}`);
+                        tooltipContent.push(`Timestamp: ${formattedTimestamp}`);
 
                         tooltipContent.push(
-                          `Lämpötila: ${roundTemperature(item.temperature)}°C`
+                          `Temperature: ${roundTemperature(item.temperature)}°C`
                         );
-                        tooltipContent.push(`Kosteus: ${item.humidity}%`);
+                        tooltipContent.push(`Humidity: ${item.humidity}%`);
 
                         if (isOutside) {
                           tooltipContent.push(
-                            `Ilmanpaine: ${item.pressure} mbar`
+                            `Pressure: ${item.pressure} mbar`
                           );
                         } else {
                           tooltipContent.push(
-                            `Vesivuoto: ${waterLeak(item.waterleak)}`
+                            `Waterleak: ${waterLeak(item.waterleak)}`
                           );
                         }
 
@@ -214,7 +197,6 @@ export default function NodeInfo({ isOutside }) {
                     ticks: {
                       stepSize: 0.5,
                       callback: function (value, index, values) {
-                        // Poista desimaalit, jos ne ovat nolla
                         return value % 1 === 0
                           ? value.toFixed(0)
                           : value.toFixed(1);
@@ -249,7 +231,7 @@ export default function NodeInfo({ isOutside }) {
           </div>
         </div>
         <div className="NodeInfo">
-          <h4>Ei tietoja</h4>
+          <h4>No data</h4>
         </div>
       </div>
     );
@@ -264,7 +246,7 @@ export default function NodeInfo({ isOutside }) {
               labels: fixedTimeLabels,
               datasets: [
                 {
-                  label: "Lämpötila",
+                  label: "Temperature",
                   data: data && data.map(data => ({
                     x: formatTimestampForChart(data.timestamp),
                     y: roundTemperature(data.temperature),
@@ -285,20 +267,20 @@ export default function NodeInfo({ isOutside }) {
                       let item = data[tooltipItems.dataIndex];
                       let tooltipContent = [];
 
-                      tooltipContent.push(`Aika: ${formattedTimestamp}`);
+                      tooltipContent.push(`Timestamp: ${formattedTimestamp}`);
 
                       tooltipContent.push(
-                        `Lämpötila: ${roundTemperature(item.temperature)}°C`
+                        `Temperature: ${roundTemperature(item.temperature)}°C`
                       );
-                      tooltipContent.push(`Kosteus: ${item.humidity}%`);
+                      tooltipContent.push(`Humidity: ${item.humidity}%`);
 
                       if (isOutside) {
                         tooltipContent.push(
-                          `Ilmanpaine: ${item.pressure} mbar`
+                          `Pressure: ${item.pressure} mbar`
                         );
                       } else {
                         tooltipContent.push(
-                          `Vesivuoto: ${waterLeak(item.waterleak)}`
+                          `Waterleak: ${waterLeak(item.waterleak)}`
                         );
                       }
 
@@ -360,76 +342,8 @@ export default function NodeInfo({ isOutside }) {
         </div>
       </div>
       <div className="NodeInfo">
-        <h4>Lämpötilan keskiarvo: {calculateAverageTemperature()}°C</h4>
+        <h4>Average temperature: {calculateAverageTemperature()}°C</h4>
       </div>
-      {/* <div className='chart'>
-        <Line
-          data={{
-            labels: data && data.map((data) => formatTimestampForChart(data.timestamp)),
-            datasets: [
-              {
-                label: "Lämpötila",
-                data: data && data.map((data) => ({
-                  x: formatTimestampForChart(data.timestamp),
-                  y: (roundTemperature(data.temperature))
-                })),
-                backgroundColor: "#064FF0",
-                borderColor: "#064FF0",
-              }
-            ],
-          }}
-          options={{
-            maintainAspectRatio: false,
-            scales: {
-              y: {
-                ticks: {
-                  stepSize: 0.5,
-                  callback: function (value, index, values) { // Poista desimaalit, jos ne ovat nolla
-                    return value % 1 === 0 ? value.toFixed(0) : value.toFixed(1);
-                  },
-                },
-              },
-            },
-          }}
-        />
-      </div> */}
-      {/* <div className="NodeInfo">
-        <button
-          className="dayPickerButtons"
-          onClick={() => toggleDataVisibility()}
-          style={{
-            backgroundColor: isDataVisible ? "black" : "#e21313",
-            color: isDataVisible ? "white" : "black",
-          }}
-        >
-          {isDataVisible ? "Piilota datapisteet" : "Näytä datapisteet"}
-        </button>
-      </div>
-      <div>
-        <button
-          onClick={() => {
-            console.log(data);
-          }}
-        >
-          Click
-        </button>
-      </div>
-      <div className="dataPointsContainer">
-        {isDataVisible &&
-          data &&
-          data.map((item) => (
-            <div key={item.id} className="dataPoint">
-              <h4>{formatTimestamp(item.timestamp)}</h4>
-              <p>Lämpötila: {roundTemperature(item.temperature)}°C</p>
-              <p>Kosteus: {item.humidity}%</p>
-              {isOutside ? (
-                <p>Ilmanpaine: {item.pressure} mbar</p>
-              ) : (
-                <p>Vesivahinko: {waterLeak(item.waterleak)}</p>
-              )}
-            </div>
-          ))}
-      </div> */}
     </div>
   );
 }

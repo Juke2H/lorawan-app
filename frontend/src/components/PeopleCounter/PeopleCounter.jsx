@@ -93,7 +93,7 @@ export default function PeopleCounter() {
                 labels: fixedTimeLabels,
                 datasets: [
                   {
-                    label: "Kävijöitä",
+                    label: "Visitors",
                     data: data && data.map(data => ({
                       x: formatTimestampForChart(data.timestamp),
                       y: data.counter_a,
@@ -164,7 +164,7 @@ export default function PeopleCounter() {
           </div>
         </div>
         <div className="NodeInfo">
-          <h4>Ei kävijöitä</h4>
+          <h4>No visitors</h4>
         </div>
       </div>
     );
@@ -179,7 +179,7 @@ export default function PeopleCounter() {
               labels: fixedTimeLabels,
               datasets: [
                 {
-                  label: "Kävijöitä",
+                  label: "Visitors",
                   data: data && data.map(data => ({
                     x: formatTimestampForChart(data.timestamp),
                     y: data.counter_a,
@@ -200,9 +200,9 @@ export default function PeopleCounter() {
                       let item = data[tooltipItems.dataIndex];
                       let tooltipContent = [];
 
-                      tooltipContent.push(`Aika: ${formattedTimestamp}`);
-                      tooltipContent.push(`Kävijöitä sisälle: ${item.counter_a}`);
-                      tooltipContent.push(`Kävijöitä ulos: ${item.counter_b}`);
+                      tooltipContent.push(`Timestamp: ${formattedTimestamp}`);
+                      tooltipContent.push(`Visitors coming in: ${item.counter_a}`);
+                      tooltipContent.push(`Visitors leaving: ${item.counter_b}`);
 
                       return tooltipContent;
                     },
@@ -269,7 +269,7 @@ export default function PeopleCounter() {
         </div>
       </div>
       <div className="NodeInfo">
-        <h4>Yhteensä {calculateTotalCounterAForDay(data)} kävijää</h4>
+        <h4>Total: {calculateTotalCounterAForDay(data)} visitors</h4>
       </div>
     </div>
   );
