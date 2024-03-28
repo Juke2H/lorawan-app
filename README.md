@@ -1,13 +1,13 @@
 # Software for Lorawan nodes
 
-Build for visualizing data send by Lorawan nodes. 
+These are the database and frontend portions built on top of a ChirpStack LoRaWan network server.
 
-## Technologies Used:
+## Built with:
 
 - Containerization: Docker
-- Backend: Node.js and express
+- Backend: Node.js and Express
 - Frontend: React.js and Vite
-- Database: Postgresql
+- Database: PostgreSQL
 
 ## Features
 
@@ -17,7 +17,8 @@ Build for visualizing data send by Lorawan nodes.
 ## Requirements
 
 - Docker
-- MQTT broker url and topic
+- Node.js
+- A working LoRaWan network or, more likely, a way to publish MQTT messages (e.g. MQTT Explorer) to fake sensor data.
 
 ## Installation instructions
 
