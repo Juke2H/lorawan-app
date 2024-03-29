@@ -2,17 +2,17 @@
 
 These are the database and frontend portions built on top of a ChirpStack LoRaWan network server.
 
+## Features
+
+- Select a specific node to open info page
+- Infopage includes chart, datapoints and calendar to change date.
+
 ## Built with:
 
 - Containerization: Docker
 - Backend: Node.js and Express
 - Frontend: React.js and Vite
 - Database: PostgreSQL
-
-## Features
-
-- Select a specific node to open info page
-- Infopage includes chart, datapoints and calendar to change date.
 
 ## Requirements
 
@@ -40,3 +40,14 @@ These are the database and frontend portions built on top of a ChirpStack LoRaWa
    ```
    http://localhost:8000
    ```
+
+## Usage
+
+If there are datapoints in the database, usage of the web application is as simple as:
+
+1. Select a sensor from the navigation bar
+2. Select a date from the calendar
+
+The chart will show available data for that date and has hoverable datapoints with tooltips.
+
+# README still in-progress
