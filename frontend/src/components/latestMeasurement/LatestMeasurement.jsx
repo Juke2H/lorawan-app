@@ -55,9 +55,9 @@ export default function LatestMeasurement ({ isOutside }) {
   // Function to format water leak status
   function waterLeak(isWaterLeaking) {
     if (isWaterLeaking == 0) {
-      isWaterLeaking = "Ei";
+      isWaterLeaking = "No";
     } else {
-      isWaterLeaking = "Kyllä";
+      isWaterLeaking = "Yes";
     }
     return isWaterLeaking;
   }
@@ -70,21 +70,21 @@ export default function LatestMeasurement ({ isOutside }) {
           {formatTimestamp(Object.values(node)[0])}
         </div>
         <div className="nodeOne">
-          Lämpötila <br />
+          Temperature <br />
           {Object.values(node)[1]} °C
         </div>
         <div className="nodeTwo">
-          Kosteus <br />
+          Humidity <br />
           {Object.values(node)[2]} %
         </div>
         {isOutside ? (
           <div className="nodeThree">
-            Ilmanpaine <br />
+            Air pressure <br />
             {Object.values(node)[3]} mbar
             </div>
           ) : (
         <div className="nodeThree">
-          Vesivuoto <br />
+          Waterleak <br />
           {waterLeak(Object.values(node)[3])}
         </div>
          )}

@@ -37,7 +37,7 @@ export default function NavBar() {
                 color: activeButton === "inside" ? "white" : "black",
               }}
             >
-              Sisälämpömittari
+              Indoor sensor
             </button>
           </Link>
           <Link
@@ -52,7 +52,7 @@ export default function NavBar() {
                 color: activeButton === "peopleCounter" ? "white" : "black",
               }}
             >
-              Kävijälaskuri
+              People counter
             </button>
           </Link>
           <Link
@@ -67,7 +67,7 @@ export default function NavBar() {
                 color: activeButton === "outside" ? "white" : "black",
               }}
             >
-              Ulkolämpömittari
+              Outdoor sensor
             </button>
           </Link>
         </div>
