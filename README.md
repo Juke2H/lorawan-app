@@ -1,3 +1,5 @@
+![Example](images/frontend-example.png)
+
 # Software for Lorawan nodes
 
 These are the database and frontend portions built on top of a ChirpStack LoRaWan network server.
@@ -51,13 +53,13 @@ The chart will show available data for that date and has hoverable datapoints wi
 
 If there are no datapoints in the database, you need to receive them from a network server, or create them yourself:
 
-The example JSON in backend/exampleData is slightly modified from ChirpStack's documentation (https://www.chirpstack.io/docs/chirpstack/integrations/events.html) to include sensor data and timestamps.
+[The example JSON](backend/exampleData/) is slightly modified from ChirpStack's documentation (https://www.chirpstack.io/docs/chirpstack/integrations/events.html) to include sensor data and timestamps.
 
 ## Things to do
 
 - Individual components for each sensor.
 - Transform NodeInfo into a component that houses sensor components.
-- Modify backend to include The Things Network messages into the database.
+- Modify backend to accept The Things Network messages into the database.
 - Limit people counter data to one per hour.
 
 # README still in-progress
